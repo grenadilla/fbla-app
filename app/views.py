@@ -40,7 +40,7 @@ def data():
     login = forms.Login()
     if login.validate_on_submit():
         signin(login.login_data.data)
-        return redirect(url_for('index'))
+        return redirect(url_for('data'))
 
     form = forms.DeleteData()
     if form.validate_on_submit():
@@ -62,11 +62,11 @@ def data():
 
 @app.route('/adduser', methods=['GET','POST'])
 def adduser():
-    #Add a new user, book, or author
+    #Add a new user or author
     login = forms.Login()
     if login.validate_on_submit():
         signin(login.login_data.data)
-        return redirect(url_for('index'))
+        return redirect(url_for('adduser'))
 
     name = None
     form = forms.NewData()
@@ -77,19 +77,39 @@ def adduser():
         form.type.data = ''
         if datatype == 'user':
             newdata = models.User(name=name)
-        elif datatype == 'book':
-            newdata = models.Book(title=name)
         elif datatype == 'author':
             newdata = models.Author(name=name)
         db.session.add(newdata)
         db.session.commit()
         
-        if datatype == 'book':
-            flash("Added new book with title " + newdata.title  + " with ID " + str(newdata.id))
-        else:
-            flash("Added new " + datatype + " with name " + newdata.name + " with ID " + str(newdata.id))
+        flash("Added new " + datatype + " with name " + newdata.name + " with ID " + str(newdata.id))
         return redirect(url_for('adduser'))
-    return render_template('adduser.html', form=form, login=login)
+    return render_template('basicform.html', form=form, login=login)
+
+
+@app.route('/addbook', methods=['GET','POST'])
+def addbook():
+    #Add a new book
+    login = forms.Login()
+    if login.validate_on_submit():
+        signin(login.login_data.data)
+        return redirect(url_for('addbook'))
+
+    title = None
+    form = forms.NewBook()
+    if form.validate_on_submit():
+        title = form.title.data
+        authorid = form.author.data
+        form.title.data = ''
+        form.author.data = ''
+        author = models.Author.query.filter_by(id=authorid).first()       
+        book = models.Book(title=title, author=author)
+        db.session.add(book)
+        db.session.commit()
+        
+        flash("Added new book with title " + title + " with ID " + str(book.id))
+        return redirect(url_for('addbook'))
+    return render_template('basicform.html', form=form, login=login)
 
 def signin(data):
     #given login data checks database and signs in
