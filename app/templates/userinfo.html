@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block page_content %}
+
+<div class="container">
+    <table class="table">
+        <thead>
+            <th>ID</th>
+            <th>Name</th>
+        </thead>
+        <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.name }}</td>
+        </tr>
+    </table>
+</div>
+{% endblock %}

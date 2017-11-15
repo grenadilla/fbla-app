@@ -1,0 +1,43 @@
+{% extends "bootstrap/base.html" %}
+
+{% block navbar %}
+<div class="navbar navbar-inverse" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle Navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">FlaskTest</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/">Home</a></li>
+                {% if 'user' in session  %}
+                    <li><a href={{ "/user/" ~ session['userid'] }}>{{ session['username'] }}</a></li>
+                {% endif %}
+                <li><a href={{ url_for("data", _external=True) }}>Data</a></li>
+                <li><a href={{ url_for("adduser", _external=True) }}>Add a User</a></li>
+            </ul>
+            <form class="navbar-form navbar-center" method="POST">
+                {{ login.csrf_token }}
+                {{ login.login_data(size=20, class_="form-control mr-sm-2", placeholder="ID or Name") }}
+                <input class="btn btn-outline-success my-2 my-sm-0" type="submit" value="Login"></input>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block content %}
+<div class="container">
+    {% for message in get_flashed_messages() %}
+        <div class="alert alert-warning">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {{ message }}
+        </div>
+    {% endfor %}
+</div>
+{% block page_content %}{% endblock %}
+{% endblock %}
