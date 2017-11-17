@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block scripts %}
+<script type="text/javascript" src="../static/catalog.js"></script>
+{% endblock %}
+
+{% block page_content %}
+<div class="container">
+<h1>Book Data</h1>
+<table class="table table-hover">
+    <thead>
+        <th>ID</th>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Borrower</th>
+    </thead>
+    <tbody>
+    {% for book in books %}
+        <tr>
+            <td>{{ book.id }}</td>
+            <td>{{ book.title }}</td>
+            <td>{{ book.author.name }}</td>
+            <td>{{ book.borrower.name }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock %}
