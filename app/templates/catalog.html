@@ -3,7 +3,7 @@
 
 {% block scripts %}
 <script type="text/javascript" src="../static/JQuery.js"></script>
-<script type="text/javascript" src="../static/catalog.js"></script>
+<script type="text/javascript" src="../static/cat2.js"></script>
 {% endblock %}
 
 {% block page_content %}
@@ -18,7 +18,7 @@
     </thead>
     <tbody>
     {% for book in books %}
-        <tr class="clickable-book" data-href={{ url_for('book', id=book.id) }}>
+        <tr class="clickable-book"  data-href={{ url_for('book', id=book.id) }}>
             <td>{{ book.id }}</td>
             <td>{{ book.title }}</td>
             <td>{{ book.author.name }}</td>
