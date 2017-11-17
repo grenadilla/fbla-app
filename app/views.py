@@ -2,6 +2,10 @@ from flask import render_template, session, redirect, url_for, flash
 from sqlalchemy import func
 from app import app, db, models, forms
 
+# create tables for author query if tables do not exist
+db.create_all()
+
+
 @app.route('/', methods=['GET','POST'])
 @app.route('/index', methods=['GET','POST'])
 def index():
@@ -107,6 +111,13 @@ def addbook():
 
     title = None
     form = forms.NewBook()
+
+    choices = []
+    authors = models.Author.query.all()
+    for author in authors:
+        choices.append((str(author.id), author.name))
+    form.author.choices = choices
+
     if form.validate_on_submit():
         title = form.title.data
         authorid = form.author.data
