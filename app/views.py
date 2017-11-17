@@ -60,6 +60,16 @@ def data():
                             form=form,
                             login=login)
 
+@app.route('/catalog', methods=['GET','POST'])
+def catalog():
+    login = forms.Login()
+    if login.validate_on_submit():
+        signin(login.login_data.data)
+        return redirect(url_for('catalog'))
+    return render_template('catalog.html',
+                            books=models.Book.query.all(),
+                            login=login)
+
 @app.route('/adduser', methods=['GET','POST'])
 def adduser():
     #Add a new user or author

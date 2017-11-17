@@ -50,27 +50,6 @@
 </table>
 <hr>
 
-<h1>Book Data</h1>
-<table class="table table-hover">
-    <thead>
-        <th>ID</th>
-        <th>Title</th>
-        <th>Author</th>
-        <th>Borrower</th>
-    </thead>
-    <tbody>
-    {% for book in books %}
-        <tr>
-            <td>{{ book.id }}</td>
-            <td>{{ book.title }}</td>
-            <td>{{ book.author.name }}</td>
-            <td>{{ book.borrower.name }}</td>
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
-<hr>
-
 {{ wtf.quick_form(form) }}
 </div>
 {% endblock %}

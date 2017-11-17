@@ -18,6 +18,7 @@
                 {% if 'user' in session  %}
                     <li><a href={{ "/user/" ~ session['userid'] }}>{{ session['username'] }}</a></li>
                 {% endif %}
+                <li><a href={{ url_for("catalog", _external=True)}}>Catalog</a></li>
                 <li><a href={{ url_for("data", _external=True) }}>Data</a></li>
                 <li><a href={{ url_for("adduser", _external=True) }}>Add a User</a></li>
                 <li><a href={{ url_for("addbook", _external=True) }}>Add a Book</a></li>

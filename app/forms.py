@@ -3,6 +3,9 @@ from wtforms import StringField, SubmitField, SelectField
 from wtforms.validators import Required
 from app import db, models
 
+# create tables for author query if tables do not exist
+db.create_all()
+
 
 class NewData(FlaskForm):
     type = SelectField("User or Author?", choices=[('user', 'User'), ('author', 'Author')], validators=[Required()])
