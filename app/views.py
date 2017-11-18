@@ -6,8 +6,8 @@ from app import app, db, models, forms
 db.create_all()
 
 
-@app.route('/', methods=['GET','POST'])
-@app.route('/index', methods=['GET','POST'])
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
 def index():
     #add below login stuff to all pages
     login = forms.Login()
@@ -16,7 +16,8 @@ def index():
         return redirect(url_for('index'))
     return render_template('index.html', login=login)
 
-@app.route('/user/<id>', methods=['GET','POST'])
+
+@app.route('/user/<id>', methods=['GET', 'POST'])
 def user(id):
     #Given an id, queries it from db and passes user object to page
     login = forms.Login()
@@ -27,7 +28,8 @@ def user(id):
     user = models.User.query.filter_by(id=id).first()
     return render_template('userinfo.html', user=user, login=login)
 
-@app.route('/book/<id>', methods=['GET','POST'])
+
+@app.route('/book/<id>', methods=['GET', 'POST'])
 def book(id):
     #Book info page, from here can borrow a book
     login = forms.Login()
@@ -37,9 +39,25 @@ def book(id):
 
     book = models.Book.query.filter_by(id=id).first()
     return render_template('bookinfo.html', book=book, login=login)
-   
 
-@app.route('/data', methods=['GET','POST'])
+
+@app.route('/borrow/<id>', methods=['GET'])
+def borrow(id):
+    book = models.Book.query.filter_by(id=id).first()
+    if book.borrower is None:
+        if 'userid' in session:
+            user = models.User.query.filter_by(id=session['userid']).first()
+            book.borrower = user
+            db.session.commit()
+            flash(session['username'] + " borrowed " + book.title)
+        else:
+            flash("Please login to borrow a book")
+    else:
+        flash("This book is not available")
+    return redirect(url_for('book', id=id))
+
+
+@app.route('/data', methods=['GET', 'POST'])
 def data():
     login = forms.Login()
     if login.validate_on_submit():
@@ -123,7 +141,7 @@ def addbook():
         authorid = form.author.data
         form.title.data = ''
         form.author.data = ''
-        author = models.Author.query.filter_by(id=authorid).first()       
+        author = models.Author.query.filter_by(id=authorid).first()
         book = models.Book(title=title, author=author)
         db.session.add(book)
         db.session.commit()

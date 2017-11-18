@@ -15,9 +15,7 @@
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li><a href="/">Home</a></li>
-                {% if 'user' in session  %}
-                    <li><a href={{ "/user/" ~ session['userid'] }}>{{ session['username'] }}</a></li>
-                {% endif %}
+                <li><a href={{ url_for("user", _external=True, id=session['userid']) }}>{{ session['username'] }}</a></li>
                 <li><a href={{ url_for("catalog", _external=True)}}>Catalog</a></li>
                 <li><a href={{ url_for("data", _external=True) }}>Data</a></li>
                 <li><a href={{ url_for("adduser", _external=True) }}>Add a User</a></li>

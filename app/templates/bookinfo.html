@@ -13,5 +13,6 @@
             <td>{{ book.title }}</td>
         </tr>
     </table>
+    <a href={{ url_for('borrow', _external=True, id=book.id )}}>Borrow</a>
 </div>
 {% endblock %}
