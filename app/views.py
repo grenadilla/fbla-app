@@ -1,4 +1,4 @@
-from flask import render_template, session, redirect, url_for, flash
+from flask import render_template, session, redirect, url_for, flash, request
 from sqlalchemy import func
 from app import app, db, models, forms
 
@@ -57,6 +57,17 @@ def borrow(id):
     return redirect(url_for('book', id=id))
 
 
+@app.route('/returnbook/<id>', methods=['GET'])
+def returnbook(id):
+    book = models.Book.query.filter_by(id=id).first()
+    if book.borrower_id == session['userid']:
+        #book.borrower = None
+        flash("User " + session['username'] + " returned " + book.title)
+    else:
+        flash('Error, wrong user id for return')
+    return redirect(redirect_url())
+
+
 @app.route('/data', methods=['GET', 'POST'])
 def data():
     login = forms.Login()
@@ -113,7 +124,6 @@ def adduser():
             newdata = models.Author(name=name)
         db.session.add(newdata)
         db.session.commit()
-        
         flash("Added new " + datatype + " with name " + newdata.name + " with ID " + str(newdata.id))
         return redirect(url_for('adduser'))
     return render_template('basicform.html', form=form, login=login)
@@ -145,7 +155,6 @@ def addbook():
         book = models.Book(title=title, author=author)
         db.session.add(book)
         db.session.commit()
-        
         flash("Added new book with title " + title + " with ID " + str(book.id))
         return redirect(url_for('addbook'))
     return render_template('basicform.html', form=form, login=login)
@@ -170,3 +179,8 @@ def signin(data):
         else:
             flash("No user found with name " + data)
 
+
+def redirect_url(default='index'):
+    return request.args.get('next') or \
+           request.referrer or \
+           url_for(default)

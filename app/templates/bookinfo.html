@@ -4,15 +4,34 @@
 
 <div class="container">
     <table class="table">
-        <thead>
-            <th>ID</th>
-            <th>Title</th>
-        </thead>
         <tr>
-            <td>{{ book.id }}</td>
+            <th scope="row">Title</th>
             <td>{{ book.title }}</td>
         </tr>
+        <tr>
+            <th scope="row">Author</th>
+            <td>{{ book.author.name }}</td>
+        </tr>
+        <tr>
+            <th scope="row">ID</th>
+            <td>{{ book.id }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Borrower</th>
+            <td>
+            {% if book.borrower == None %}
+                Available
+            {% else %}
+                {{ book.borrower.name }}
+            {% endif %}
+            </td>
+        </tr>
     </table>
-    <a href={{ url_for('borrow', _external=True, id=book.id )}}>Borrow</a>
+    <hr>
+    {% if book.borrower.id != session['userid'] %}
+        <a class="btn btn-default" href={{ url_for('borrow', _external=True, id=book.id )}}>Borrow</a>
+    {% else %}
+        <a class="btn btn-default" href={{ url_for('returnbook', _external=True, id=book.id )}}>Return</a>
+    {% endif %}
 </div>
 {% endblock %}
