@@ -61,7 +61,8 @@ def borrow(id):
 def returnbook(id):
     book = models.Book.query.filter_by(id=id).first()
     if book.borrower_id == session['userid']:
-        #book.borrower = None
+        book.borrower = None
+        db.session.commit()
         flash("User " + session['username'] + " returned " + book.title)
     else:
         flash('Error, wrong user id for return')
