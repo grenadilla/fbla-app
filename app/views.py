@@ -23,10 +23,20 @@ def user(id):
     login = forms.Login()
     if login.validate_on_submit():
         signin(login.login_data.data)
-        return redirect(url_for('user', id=str(id)))
+        return redirect(redirect_url())
 
     user = models.User.query.filter_by(id=id).first()
     return render_template('userinfo.html', user=user, login=login)
+
+@app.route('/author/<id>', methods=['GET','POST'])
+def author(id):
+    login = forms.Login()
+    if login.validate_on_submit():
+        signin(login.login_data.data)
+        return redirect(redirect_url())
+
+    author = models.Author.query.filter_by(id=id).first()
+    return render_template('authorinfo.html', author=author, login=login)
 
 
 @app.route('/book/<id>', methods=['GET', 'POST'])
@@ -35,7 +45,7 @@ def book(id):
     login = forms.Login()
     if login.validate_on_submit():
         signin(login.login_data.data)
-        return redirect(url_for('book', id=str(id)))
+        return redirect(redirect_url())
 
     book = models.Book.query.filter_by(id=id).first()
     return render_template('bookinfo.html', book=book, login=login)
@@ -54,7 +64,7 @@ def borrow(id):
             flash("Please login to borrow a book")
     else:
         flash("This book is not available")
-    return redirect(url_for('book', id=id))
+    return redirect(redirect_url())
 
 
 @app.route('/returnbook/<id>', methods=['GET'])
@@ -74,7 +84,7 @@ def data():
     login = forms.Login()
     if login.validate_on_submit():
         signin(login.login_data.data)
-        return redirect(url_for('data'))
+        return redirect(redirect_url())
 
     form = forms.DeleteData()
     if form.validate_on_submit():
@@ -86,7 +96,7 @@ def data():
             db.session.delete(book)
         db.session.commit()
         flash("Deleted all data")
-        return redirect(url_for('data'))
+        return redirect(redirect_url())
     return render_template('data.html',
                             users=models.User.query.all(),
                             authors=models.Author.query.all(),
@@ -99,7 +109,7 @@ def catalog():
     login = forms.Login()
     if login.validate_on_submit():
         signin(login.login_data.data)
-        return redirect(url_for('catalog'))
+        return redirect(redirect_url())
     return render_template('catalog.html',
                             books=models.Book.query.all(),
                             login=login)
@@ -110,7 +120,7 @@ def adduser():
     login = forms.Login()
     if login.validate_on_submit():
         signin(login.login_data.data)
-        return redirect(url_for('adduser'))
+        return redirect(redirect_url())
 
     name = None
     form = forms.NewData()
@@ -126,7 +136,7 @@ def adduser():
         db.session.add(newdata)
         db.session.commit()
         flash("Added new " + datatype + " with name " + newdata.name + " with ID " + str(newdata.id))
-        return redirect(url_for('adduser'))
+        return redirect(redirect_url())
     return render_template('basicform.html', form=form, login=login)
 
 
@@ -136,7 +146,7 @@ def addbook():
     login = forms.Login()
     if login.validate_on_submit():
         signin(login.login_data.data)
-        return redirect(url_for('addbook'))
+        return redirect(redirect_url())
 
     title = None
     form = forms.NewBook()
@@ -157,7 +167,7 @@ def addbook():
         db.session.add(book)
         db.session.commit()
         flash("Added new book with title " + title + " with ID " + str(book.id))
-        return redirect(url_for('addbook'))
+        return redirect(redirect_url())
     return render_template('basicform.html', form=form, login=login)
 
 def signin(data):
