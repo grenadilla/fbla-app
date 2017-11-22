@@ -21,17 +21,17 @@
     </table>
     <hr>
     <h3>Books</h3>
-    <table class="table table-hover">
+    <table class="table table-bordered table-hover">
         <thead>
             <th>Title</th>
             <th>Author</th>
             <th>ID</th>
         </thead>
         {% for book in user.books %}
-            <tr class="clickable-link"  data-href={{ url_for('book', id=book.id) }}>
-                <td>{{ book.title }}</td>
+            <tr>
+                <td class="clickable-link"  data-href={{ url_for('book', id=book.id) }}>{{ book.title }}</td>
                 <td class="clickable-link" data-href={{ url_for('author', id=book.author_id) }}>{{ book.author.name }}</td>
-                <td>{{ book.id }}</td>
+                <td class="clickable-link"  data-href={{ url_for('book', id=book.id) }}>{{ book.id }}</td>
             </tr>
         {% endfor %}
     </table>
