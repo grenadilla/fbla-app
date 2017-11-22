@@ -1,5 +1,5 @@
 $(document).ready(function($) {
-    $(".clickable-book").click(function() {
+    $(".clickable-link").click(function() {
         window.location.href = $(this).data("href");
     });
 });

@@ -28,12 +28,12 @@
             <th>ID</th>
         </thead>
         {% for book in author.books %}
-            <tr class="clickable-book"  data-href={{ url_for('book', id=book.id) }}>
+            <tr class="clickable-link"  data-href={{ url_for('book', id=book.id) }}>
                 <td>{{ book.title }}</td>
                 {% if book.borrower == None %}
                     <td>Available</td>
                 {% else %}
-                    <td>{{ book.borrower.name }}</td>
+                    <td class="clickable-link" data-href={{ url_for('user', id=book.borrower_id) }}>{{ book.borrower.name }}</td>
                 {% endif %}
                 <td>{{ book.id }}</td>
             </tr>
