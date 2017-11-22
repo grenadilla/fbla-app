@@ -29,9 +29,9 @@
     </table>
     <hr>
     {% if book.borrower.id != session['userid'] %}
-        <a class="btn btn-default" href={{ url_for('borrow', _external=True, id=book.id )}}>Borrow</a>
+        <a class="btn btn-default" href={{ url_for('borrow', _external=True, id=book.id )}}>Borrow Book</a>
     {% else %}
-        <a class="btn btn-default" href={{ url_for('returnbook', _external=True, id=book.id )}}>Return</a>
+        <a class="btn btn-default" href={{ url_for('returnbook', _external=True, id=book.id )}}>Return Book</a>
     {% endif %}
 </div>
 {% endblock %}
