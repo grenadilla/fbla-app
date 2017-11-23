@@ -34,7 +34,7 @@
         </thead>
         {% for copy in user.books %}
             <tr>
-                <td class="clickable-link"  data-href={{ url_for('book', id=copy.book_id) }}>{{ copy.book__id }}</td>
+                <td class="clickable-link"  data-href={{ url_for('book', id=copy.book_id) }}>{{ copy.book_id }}</td>
                 <td class="clickable-link"  data-href={{ url_for('book', id=copy.book.id) }}>{{ copy.id }}</td>
                 <td class="clickable-link"  data-href={{ url_for('book', id=copy.book.id) }}>{{ copy.book.title }}</td>
                 <td class="clickable-link" data-href={{ url_for('author', id=copy.book.author_id) }}>{{ copy.book.author.name }}</td>
