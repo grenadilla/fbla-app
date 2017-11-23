@@ -2,13 +2,13 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% block page_content %}
 
-{% block style %}
-<link rel="stylesheet" href={{ url_for('static', filename='style.css') }}>
-{% endblock %}
-
 {% block scripts %}
 {{ super() }}
 <script type="text/javascript" src={{ url_for('static', filename='links.js') }}></script>
+{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href={{ url_for('static', filename='style.css') }}>
 {% endblock %}
 
 <div class="container">

@@ -2,13 +2,13 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% block page_content %}
 
-{% block style %}
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-{% endblock %}
-
 {% block scripts %}
 {{ super() }}
 <script type="text/javascript" src={{ url_for('static', filename='links.js') }}></script>
+{% endblock %}
+
+{% block style %}
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 {% endblock %}
 
 <div class="container">
@@ -26,7 +26,11 @@
             <td class="clickable-link" data-href={{ url_for('book', id=book.id) }}>{{ book.id }}</td>
             <td class="clickable-link" data-href={{ url_for('book', id=book.id) }}>{{ book.title }}</td>
             <td class="clickable-link" data-href={{ url_for('author', id=book.author_id) }} >{{ book.author.name }}</td>
+            {% if book.borrower is none %}
+            <td>Available</td>
+            {% else %}
             <td class="clickable-link" data-href={{ url_for('user', id=book.borrower_id) }}>{{ book.borrower.name }}</td>
+            {% endif %}
         </tr>
     {% endfor %}
     </tbody>
