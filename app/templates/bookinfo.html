@@ -2,13 +2,22 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% block page_content %}
 
+{% block style %}
+<link rel="stylesheet" href={{ url_for('static', filename='style.css') }}>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript" src={{ url_for('static', filename='links.js') }}></script>
+{% endblock %}
+
 <div class="container">
-    <table class="table">
+    <table class="table table-hover">
         <tr>
             <th scope="row">Title</th>
             <td>{{ book.title }}</td>
         </tr>
-        <tr>
+        <tr class="clickable-link" data-href={{ url_for('author', id=book.author_id) }}>
             <th scope="row">Author</th>
             <td>{{ book.author.name }}</td>
         </tr>
@@ -16,16 +25,17 @@
             <th scope="row">ID</th>
             <td>{{ book.id }}</td>
         </tr>
+        {% if book.borrower == None %}
         <tr>
-            <th scope="row">Borrower</th>
-            <td>
-            {% if book.borrower == None %}
-                Available
-            {% else %}
-                {{ book.borrower.name }}
-            {% endif %}
-            </td>
+            <th scope="row">Borrowed By</th>
+            <td>Available</td>
         </tr>
+        {% else %}
+        <tr class="clickable-link" data-href={{ url_for('user', id=book.borrower_id) }}>
+            <th scope="row">Borrowed By</th>
+            <td>{{ book.borrower.name }}</td>
+        </tr>
+        {% endif %}
     </table>
     <hr>
     {% if book.borrower.id != session['userid'] %}

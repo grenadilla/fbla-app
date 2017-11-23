@@ -2,9 +2,13 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% block page_content %}
 
+{% block style %}
+<link rel="stylesheet" href={{ url_for('static', filename='style.css') }}>
+{% endblock %}
+
 {% block scripts %}
 {{ super() }}
-<script type="text/javascript" src="../static/links.js"></script>
+<script type="text/javascript" src={{ url_for('static', filename='links.js') }}></script>
 {% endblock %}
 
 <div class="container">
@@ -21,21 +25,21 @@
     </table>
     <hr>
     <h3>Books</h3>
-    <table class="table table-hover">
+    <table class="table table-bordered table-hover">
         <thead>
+            <th>ID</th>
             <th>Title</th>
             <th>Borrowed By</th>
-            <th>ID</th>
         </thead>
         {% for book in author.books %}
-            <tr class="clickable-link"  data-href={{ url_for('book', id=book.id) }}>
-                <td>{{ book.title }}</td>
+            <tr>
+                <td class="clickable-link"  data-href={{ url_for('book', id=book.id) }}>{{ book.id }}</td>
+                <td class="clickable-link"  data-href={{ url_for('book', id=book.id) }}>{{ book.title }}</td>
                 {% if book.borrower == None %}
                     <td>Available</td>
                 {% else %}
                     <td class="clickable-link" data-href={{ url_for('user', id=book.borrower_id) }}>{{ book.borrower.name }}</td>
                 {% endif %}
-                <td>{{ book.id }}</td>
             </tr>
         {% endfor %}
     </table>
