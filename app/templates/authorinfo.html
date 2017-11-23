@@ -33,11 +33,11 @@
             <th>Borrowed By</th>
         </thead>
         {% for book in author.books %}
-        {% for copy in book %}
+        {% for copy in book.copies %}
             <tr>
-                <td class="clickable-link" data-href={{ url_for('book', id=copy.title_id) }}>{{ copy.title_.id }}</td>
-                <td class="clickable-link" data-href={{ url_for('book', id=copy.title_id) }}>{{ copy.id }}</td>
-                <td class="clickable-link" data-href={{ url_for('book', id=copy.title_id) }}>{{ copy.title }}</td>
+                <td class="clickable-link" data-href={{ url_for('book', id=book.id) }}>{{ book.id }}</td>
+                <td class="clickable-link" data-href={{ url_for('book', id=book.id) }}>{{ copy.id }}</td>
+                <td class="clickable-link" data-href={{ url_for('book', id=book.id) }}>{{ book.title }}</td>
                 {% if copy.borrower is none %}
                     <td>Available</td>
                 {% else %}

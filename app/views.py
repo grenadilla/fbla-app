@@ -48,17 +48,17 @@ def book(id):
         return redirect(redirect_url())
 
     book = models.Book.query.filter_by(id=id).first()
-    borrowed = 0
-    for copy in book:
+    borrowed_id = 0
+    for copy in book.copies:
         if session['userid'] == copy.borrower_id:
-            borrowed = copy.id
-    return render_template('bookinfo.html', book=book, login=login, borrowed=borrowed)
+            borrowed_id = copy.id
+    return render_template('bookinfo.html', book=book, login=login, borrowed_id=borrowed_id)
 
 
 @app.route('/borrow/<id>', methods=['GET'])
 def borrow(id):
     book = models.Book.query.filter_by(id=id).first()
-    for copy in book:
+    for copy in book.copies:
         if copy.borrower is None:
             if 'userid' in session:
                 user = models.User.query.filter_by(id=session['userid']).first()
@@ -78,7 +78,7 @@ def returnbook(id):
     if copy.borrower_id == session['userid']:
         copy.borrower = None
         db.session.commit()
-        flash("User " + session['username'] + " returned " + copy.title)
+        flash("User " + session['username'] + " returned " + copy.book.title)
     else:
         flash('Error, wrong user id for return')
     return redirect(redirect_url())
@@ -179,10 +179,10 @@ def addbook():
         book = models.Book(title=title, author=author)
         db.session.add(book)
         for i in range(0, copies):
-            copy = models.Copy(title=book)
+            copy = models.Copy(book=book)
             db.session.add(copy)
         db.session.commit()
-        flash("Added new " + str(copies) + "book(s) with title " + title + " with book ID " + str(book.id))
+        flash("Added new " + str(copies) + " book(s) with title " + title + " with book ID " + str(book.id))
         return redirect(redirect_url())
     return render_template('basicform.html', form=form, login=login)
 

@@ -27,7 +27,7 @@
         </tr>
         <tr>
             <th scope="row">Copies</th>
-            <td>{{ len(book.copies) }}</td>
+            <td>{{ book.copies|length }}</td>
         </tr> 
     </table>
     <hr>
@@ -37,24 +37,23 @@
             <th>Borrowed By</th>
         </thead>
         {% for copy in book.copies %}
-            <tr>
-                <td>{{ copy.id }}</td>
-            </tr>
             {% if copy.borrower is none %}
             <tr>
+                <td>{{ copy.id }}</td>
                 <td>Available</td>
             </tr>
             {% else %}
-            <tr class="clickable-link" data-href={{ url_for('user', id=book.borrower_id) }}>
-                <td>{{ book.borrower.name }}</td>
+            <tr class="clickable-link" data-href={{ url_for('user', id=copy.borrower_id) }}>
+                <td>{{ copy.id }}</td>
+                <td>{{ copy.borrower.name }}</td>
             </tr>
             {% endif %}
         {% endfor %}
     </table>
-    {% if borrowed != 0 %}
+    {% if borrowed_id == 0 %}
         <a class="btn btn-default" href={{ url_for('borrow', _external=True, id=book.id )}}>Borrow Book</a>
     {% else %}
-        <a class="btn btn-default" href={{ url_for('returnbook', _external=True, id=borrowed )}}>Return Book</a>
+        <a class="btn btn-default" href={{ url_for('returnbook', _external=True, id=borrowed_id )}}>Return Book</a>
     {% endif %}
 </div>
 {% endblock %}
