@@ -24,3 +24,8 @@ class Login(FlaskForm):
 
 class DeleteData(FlaskForm):
     submit = SubmitField('DELETE ALL DATA')
+
+
+class EditUser(FlaskForm):
+    name = StringField("New name", default="", validators=[Required()])
+    submit = SubmitField('Submit')

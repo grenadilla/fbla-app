@@ -55,6 +55,26 @@ def book(id):
     return render_template('bookinfo.html', book=book, login=login, borrowed_id=borrowed_id)
 
 
+@app.route('/edit/user/<id>', methods=['GET', 'POST'])
+def edituser(id):
+    form = forms.EditUser()
+    login = forms.Login()
+    if login.validate_on_submit():
+        signin(login.login_data.data)
+        return redirect(redirect_url())
+
+    user = models.User.query.filter_by(id=id).first()
+    form = forms.EditUser(name=user.name)
+    form_title = "Edit user " + user.name
+    if form.validate_on_submit():
+        user.name = form.name.data
+        db.session.commit()
+        if session['userid'] == user.id:
+            session['username'] = user.name
+        return redirect(url_for('user', id=user.id))
+    return render_template('basicform.html', form_title=form_title, form=form, login=login)
+
+
 @app.route('/borrow/<id>', methods=['GET'])
 def borrow(id):
     book = models.Book.query.filter_by(id=id).first()
