@@ -12,7 +12,8 @@
 {% endblock %}
 
 <div class="container">
-    <h3>Author</h3>
+    <h3 style="display: inline-block">Author</h3>
+    <a class="btn btn-default" style="display: inline-block" href={{ url_for('editauthor', _external=True, id=author.id )}}>Edit</a>
     <table class="table">
         <tr>
             <th scope="row">Name</th>

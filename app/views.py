@@ -50,7 +50,7 @@ def book(id):
     book = models.Book.query.filter_by(id=id).first()
     borrowed_id = 0
     for copy in book.copies:
-        if session['userid'] == copy.borrower_id:
+        if 'userid' in session and session['userid'] == copy.borrower_id:
             borrowed_id = copy.id
     return render_template('bookinfo.html', book=book, login=login, borrowed_id=borrowed_id)
 
@@ -67,11 +67,56 @@ def edituser(id):
     form = forms.EditUser(name=user.name)
     form_title = "Edit user " + user.name
     if form.validate_on_submit():
+        flash("Changed user " + user.name + " to " + form.name.data)
         user.name = form.name.data
         db.session.commit()
-        if session['userid'] == user.id:
+        if 'userid' in session and session['userid'] == user.id:
             session['username'] = user.name
         return redirect(url_for('user', id=user.id))
+    return render_template('basicform.html', form_title=form_title, form=form, login=login)
+
+
+@app.route('/edit/author/<id>', methods=['GET', 'POST'])
+def editauthor(id):
+    form = forms.EditUser()
+    login = forms.Login()
+    if login.validate_on_submit():
+        signin(login.login_data.data)
+        return redirect(redirect_url())
+
+    author = models.Author.query.filter_by(id=id).first()
+    form = forms.EditUser(name=author.name)
+    form_title = "Edit author " + author.name
+    if form.validate_on_submit():
+        flash("Changed author " + author.name + " to " + form.name.data)
+        author.name = form.name.data
+        db.session.commit()
+        return redirect(url_for("author", id=author.id))
+    return render_template('basicform.html', form_title=form_title, form=form, login=login)
+
+
+@app.route('/edit/book/<id>', methods=['GET', 'POST'])
+def editbook(id):
+    form = forms.EditBook()
+    login = forms.Login()
+    if login.validate_on_submit():
+        signin(login.login_data.data)
+        return redirect(redirect_url())
+
+    book = models.Book.query.filter_by(id=id).first()
+    choices = []
+    authors = models.Author.query.all()
+    for author in authors:
+        choices.append((str(author.id), author.name))
+    form.author.choices = choices
+    form = forms.EditBook(title=book.title, author=str(book.author_id))
+    form_title = "Edit book " + book.title
+    if form.validate_on_submit():
+        flash("Changed book " + book.title)
+        book.title = form.title.data
+        book.author = authors.filter_by(id=int(form.author.data))
+        db.session.commit()
+        return redirect(url_for("book", id=book.id))
     return render_template('basicform.html', form_title=form_title, form=form, login=login)
 
 
@@ -95,7 +140,7 @@ def borrow(id):
 @app.route('/returnbook/<id>', methods=['GET'])
 def returnbook(id):
     copy = models.Copy.query.filter_by(id=id).first()
-    if copy.borrower_id == session['userid']:
+    if 'userid' in session and copy.borrower_id == session['userid']:
         copy.borrower = None
         db.session.commit()
         flash("User " + session['username'] + " returned " + copy.book.title)

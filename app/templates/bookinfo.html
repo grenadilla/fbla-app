@@ -12,7 +12,8 @@
 {% endblock %}
 
 <div class="container">
-    <h3>Book</h3>
+    <h3 style="display: inline-block">Book</h3>
+    <a class="btn btn-default" style="display: inline-block" href={{ url_for('editbook', _external=True, id=book.id )}}>Edit</a>
     <table class="table table-hover">
         <tr>
             <th scope="row">Title</th>

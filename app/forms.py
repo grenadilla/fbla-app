@@ -29,3 +29,9 @@ class DeleteData(FlaskForm):
 class EditUser(FlaskForm):
     name = StringField("New name", default="", validators=[Required()])
     submit = SubmitField('Submit')
+
+
+class EditBook(FlaskForm):
+    name = StringField("New name", default="", validators=[Required()])
+    author = SelectField("New author", choices=[], validators=[Required()])
+    submit = SubmitField('Submit')
