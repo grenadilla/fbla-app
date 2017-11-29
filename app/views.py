@@ -30,6 +30,7 @@ def user(id):
 
 @app.route('/author/<id>', methods=['GET','POST'])
 def author(id):
+    #Given id, queries it from the database and passes the correct author object to page
     login = forms.Login()
     if login.validate_on_submit():
         signin(login.login_data.data)
@@ -41,6 +42,7 @@ def author(id):
 
 @app.route('/book/<id>', methods=['GET', 'POST'])
 def book(id):
+    #Given book (not copy) id, queries it and passes book data to page to display
     #Book info page, from here can borrow a book
     login = forms.Login()
     if login.validate_on_submit():
@@ -48,6 +50,8 @@ def book(id):
         return redirect(redirect_url())
 
     book = models.Book.query.filter_by(id=id).first()
+
+    #Checks if user has borrowed a book, passes id of borrowed copy (0 if not borrowed)
     borrowed_id = 0
     for copy in book.copies:
         if 'userid' in session and session['userid'] == copy.borrower_id:
@@ -57,7 +61,7 @@ def book(id):
 
 @app.route('/edit/user/<id>', methods=['GET', 'POST'])
 def edituser(id):
-    form = forms.EditUser()
+    #Page to edit user data like name
     login = forms.Login()
     if login.validate_on_submit():
         signin(login.login_data.data)
@@ -70,6 +74,7 @@ def edituser(id):
         flash("Changed user " + user.name + " to " + form.name.data)
         user.name = form.name.data
         db.session.commit()
+        #If edited user is logged in, change log in data too
         if 'userid' in session and session['userid'] == user.id:
             session['username'] = user.name
         return redirect(url_for('user', id=user.id))
@@ -78,7 +83,7 @@ def edituser(id):
 
 @app.route('/edit/author/<id>', methods=['GET', 'POST'])
 def editauthor(id):
-    form = forms.EditUser()
+    #Page to edit author data like name
     login = forms.Login()
     if login.validate_on_submit():
         signin(login.login_data.data)
@@ -97,7 +102,7 @@ def editauthor(id):
 
 @app.route('/edit/book/<id>', methods=['GET', 'POST'])
 def editbook(id):
-    form = forms.EditBook()
+    #Page to edit book data like title and author
     login = forms.Login()
     if login.validate_on_submit():
         signin(login.login_data.data)
@@ -122,9 +127,13 @@ def editbook(id):
 
 @app.route('/borrow/<id>', methods=['GET'])
 def borrow(id):
+    #Page to borrow a book, accessed by redirect from book page
+    #Does not display page, instead redirects to previous page
+    #ID is book ID, not copy ID
     book = models.Book.query.filter_by(id=id).first()
     for copy in book.copies:
         if copy.borrower is None:
+            #If user is logged in, user borrows first available copy of book
             if 'userid' in session:
                 user = models.User.query.filter_by(id=session['userid']).first()
                 copy.borrower = user
@@ -133,24 +142,28 @@ def borrow(id):
                 return redirect(redirect_url())
             else:
                 flash("Please login to borrow a book")
+                return redirect(redirect_url())
     flash("This book is not available")
     return redirect(redirect_url())
 
 
 @app.route('/returnbook/<id>', methods=['GET'])
 def returnbook(id):
+    #URL to return the copy of a book. Id is copy ID, not book ID
     copy = models.Copy.query.filter_by(id=id).first()
     if 'userid' in session and copy.borrower_id == session['userid']:
         copy.borrower = None
         db.session.commit()
         flash("User " + session['username'] + " returned " + copy.book.title)
     else:
-        flash('Error, wrong user id for return')
+        flash('Error, wrong user id for returning book')
     return redirect(redirect_url())
 
 
 @app.route('/data', methods=['GET', 'POST'])
 def data():
+    #Currently displays data from db. Delete later
+    #Can delete all data from here
     login = forms.Login()
     if login.validate_on_submit():
         signin(login.login_data.data)
@@ -179,6 +192,7 @@ def data():
 
 @app.route('/catalog', methods=['GET','POST'])
 def catalog():
+    #Catalog of all books
     login = forms.Login()
     if login.validate_on_submit():
         signin(login.login_data.data)
@@ -273,6 +287,7 @@ def signin(data):
 
 
 def redirect_url(default='index'):
+    #Returns previous url
     return request.args.get('next') or \
            request.referrer or \
            url_for(default)
