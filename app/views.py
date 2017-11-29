@@ -104,17 +104,17 @@ def editbook(id):
         return redirect(redirect_url())
 
     book = models.Book.query.filter_by(id=id).first()
+    form = forms.EditBook(title=book.title, author=str(book.author_id))
     choices = []
     authors = models.Author.query.all()
     for author in authors:
         choices.append((str(author.id), author.name))
     form.author.choices = choices
-    form = forms.EditBook(title=book.title, author=str(book.author_id))
     form_title = "Edit book " + book.title
     if form.validate_on_submit():
         flash("Changed book " + book.title)
         book.title = form.title.data
-        book.author = authors.filter_by(id=int(form.author.data))
+        book.author = models.Author.query.filter_by(id=int(form.author.data)).first()
         db.session.commit()
         return redirect(url_for("book", id=book.id))
     return render_template('basicform.html', form_title=form_title, form=form, login=login)

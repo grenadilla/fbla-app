@@ -32,6 +32,6 @@ class EditUser(FlaskForm):
 
 
 class EditBook(FlaskForm):
-    name = StringField("New name", default="", validators=[Required()])
+    title = StringField("New name", default="", validators=[Required()])
     author = SelectField("New author", choices=[], validators=[Required()])
     submit = SubmitField('Submit')
