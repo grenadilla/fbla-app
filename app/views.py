@@ -1,5 +1,6 @@
 from flask import render_template, session, redirect, url_for, flash, request
 from sqlalchemy import func
+from datetime import datetime
 from app import app, db, models, forms
 
 # create tables for author query if tables do not exist
@@ -137,6 +138,8 @@ def borrow(id):
             if 'userid' in session:
                 user = models.User.query.filter_by(id=session['userid']).first()
                 copy.borrower = user
+                time = datetime.now()
+                copy.borrow_time = time.replace(microsecond=0)
                 db.session.commit()
                 flash(session['username'] + " borrowed " + book.title)
                 return redirect(redirect_url())
@@ -153,6 +156,7 @@ def returnbook(id):
     copy = models.Copy.query.filter_by(id=id).first()
     if 'userid' in session and copy.borrower_id == session['userid']:
         copy.borrower = None
+        copy.borrow_time = None
         db.session.commit()
         flash("User " + session['username'] + " returned " + copy.book.title)
     else:

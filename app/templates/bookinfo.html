@@ -38,17 +38,20 @@
         <thead>
             <th>ID</th>
             <th>Borrowed By</th>
+            <th>Date of Borrow</th>
         </thead>
         {% for copy in book.copies %}
             {% if copy.borrower is none %}
             <tr>
                 <td>{{ copy.id }}</td>
                 <td>Available</td>
+                <td></td>
             </tr>
             {% else %}
             <tr class="clickable-link" data-href={{ url_for('user', id=copy.borrower_id) }}>
                 <td>{{ copy.id }}</td>
                 <td>{{ copy.borrower.name }}</td>
+                <td>{{ copy.borrow_time }}</td>
             </tr>
             {% endif %}
         {% endfor %}
