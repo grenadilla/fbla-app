@@ -6,6 +6,7 @@ class UserType(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(16), index=True, unique=True)
     borrow_length = db.Column(db.Interval())
+    users = db.relationship('User', backref='type')
 
 
 class User(db.Model):
@@ -13,6 +14,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), index=True, unique=True)
     books = db.relationship('Copy', backref='borrower')
+    type_id = db.Column(db.Integer, db.ForeignKey('usertypes.id'))
 
     def __repr__(self):
         return '<User %r>' % (self.name)

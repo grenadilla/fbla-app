@@ -1,10 +1,17 @@
 from flask import render_template, session, redirect, url_for, flash, request
 from sqlalchemy import func
-from datetime import datetime
+import datetime
 from app import app, db, models, forms
 
 # create tables for author query if tables do not exist
 db.create_all()
+if models.UserType.query.filter_by(name='student').first() is None:
+    role_student = models.UserType(name='student', borrow_length=datetime.timedelta(days=14))
+    db.session.add(role_student)
+if models.UserType.query.filter_by(name='teacher').first() is None:
+    role_teacher = models.UserType(name='teacher', borrow_length=datetime.timedelta(days=28))
+    db.session.add(role_teacher)
+db.session.commit()
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -138,7 +145,7 @@ def borrow(id):
             if 'userid' in session:
                 user = models.User.query.filter_by(id=session['userid']).first()
                 copy.borrower = user
-                time = datetime.now()
+                time = datetime.datetime.now()
                 copy.borrow_time = time.replace(microsecond=0)
                 db.session.commit()
                 flash(session['username'] + " borrowed " + book.title)
@@ -220,8 +227,14 @@ def adduser():
         datatype = form.type.data
         form.name.data = ''
         form.type.data = ''
-        if datatype == 'user':
+        role_student = models.UserType.query.filter_by(name='student').first()
+        role_teacher = models.UserType.query.filter_by(name='teacher').first()
+        if datatype == 'student':
             newdata = models.User(name=name)
+            newdata.type = role_student
+        elif datatype == 'teacher':
+            newdata = models.User(name=name)
+            newdata.type = role_teacher
         elif datatype == 'author':
             newdata = models.Author(name=name)
         db.session.add(newdata)

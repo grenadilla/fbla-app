@@ -5,7 +5,7 @@ from app import db, models
 
 
 class NewData(FlaskForm):
-    type = SelectField("User or Author?", choices=[('user', 'User'), ('author', 'Author')], validators=[Required()])
+    type = SelectField("Student, Teacher, or Author?", choices=[('student', 'Student'), ('teacher', 'Teacher'), ('author', 'Author')], validators=[Required()])
     name = StringField("Name of user or author", validators=[Required()])
     submit = SubmitField('Submit')
 
