@@ -1,15 +1,16 @@
 from flask import render_template, session, redirect, url_for, flash, request
 from sqlalchemy import func
 import datetime
+from decimal import Decimal
 from app import app, db, models, forms
 
 # create tables for author query if tables do not exist
 db.create_all()
 if models.UserType.query.filter_by(name='student').first() is None:
-    role_student = models.UserType(name='student', borrow_length=datetime.timedelta(days=14))
+    role_student = models.UserType(name='student', borrow_length=datetime.timedelta(seconds=14), fine=Decimal('0.5'))
     db.session.add(role_student)
 if models.UserType.query.filter_by(name='teacher').first() is None:
-    role_teacher = models.UserType(name='teacher', borrow_length=datetime.timedelta(days=28))
+    role_teacher = models.UserType(name='teacher', borrow_length=datetime.timedelta(seconds=28), fine=Decimal('0.2'))
     db.session.add(role_teacher)
 db.session.commit()
 
@@ -147,6 +148,7 @@ def borrow(id):
                 copy.borrower = user
                 time = datetime.datetime.now()
                 copy.borrow_time = time.replace(microsecond=0)
+                copy.return_time = copy.borrow_time + user.type.borrow_length
                 db.session.commit()
                 flash(session['username'] + " borrowed " + book.title)
                 return redirect(redirect_url())
@@ -162,8 +164,17 @@ def returnbook(id):
     #URL to return the copy of a book. Id is copy ID, not book ID
     copy = models.Copy.query.filter_by(id=id).first()
     if 'userid' in session and copy.borrower_id == session['userid']:
+        #calculate fines
+        delta = datetime.datetime.now() - copy.return_time
+        if delta > datetime.timedelta(0):
+            fine = delta.days * (copy.borrower.type.fine + 1)
+            flash("Fine of " + str(fine))
+        else:
+            flash("No fines")
+        #reset borrow variables
         copy.borrower = None
         copy.borrow_time = None
+        copy.return_time = None
         db.session.commit()
         flash("User " + session['username'] + " returned " + copy.book.title)
     else:

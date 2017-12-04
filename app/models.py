@@ -6,6 +6,7 @@ class UserType(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(16), index=True, unique=True)
     borrow_length = db.Column(db.Interval())
+    fine = db.Column(db.Float(asdecimal=True))
     users = db.relationship('User', backref='type')
 
 
@@ -57,6 +58,7 @@ class Copy(db.Model):
     borrower_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     book_id = db.Column(db.Integer, db.ForeignKey('books.id'))
     borrow_time = db.Column(db.DateTime)
+    return_time = db.Column(db.DateTime)
     #title = db.Column(db.String, db.ForeignKey('books.title'))
 
     def __repr__(self):
