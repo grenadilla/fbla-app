@@ -27,6 +27,10 @@
             <th scope="row">ID</th>
             <td>{{ user.id }}</td>
         </tr>
+        <tr>
+            <th scope="row">Fines</th>
+            <td>{{ '$' ~ user.total_fines|float }}</td>
+        </tr>
     </table>
     <hr>
     <h3>Books</h3>

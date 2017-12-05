@@ -7,10 +7,10 @@ from app import app, db, models, forms
 # create tables for author query if tables do not exist
 db.create_all()
 if models.UserType.query.filter_by(name='student').first() is None:
-    role_student = models.UserType(name='student', borrow_length=datetime.timedelta(seconds=14), fine=Decimal('0.5'))
+    role_student = models.UserType(name='student', borrow_length=datetime.timedelta(14), fine=Decimal('0.50'))
     db.session.add(role_student)
 if models.UserType.query.filter_by(name='teacher').first() is None:
-    role_teacher = models.UserType(name='teacher', borrow_length=datetime.timedelta(seconds=28), fine=Decimal('0.2'))
+    role_teacher = models.UserType(name='teacher', borrow_length=datetime.timedelta(28), fine=Decimal('0.20'))
     db.session.add(role_teacher)
 db.session.commit()
 
@@ -170,6 +170,8 @@ def returnbook(id):
             fine = (delta.days + 1) * copy.borrower.type.fine
             user = models.User.query.filter_by(id=session['userid']).first()
             user.total_fines += fine
+            #Round to two places
+            user.total_fines = user.total_fines.quantize(Decimal(10)**-2)
             flash("Fine of " + str(float(fine)))
         #reset borrow variables
         copy.borrower = None
