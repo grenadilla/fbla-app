@@ -167,10 +167,10 @@ def returnbook(id):
         #calculate fines
         delta = datetime.datetime.now() - copy.return_time
         if delta > datetime.timedelta(0):
-            fine = delta.days * (copy.borrower.type.fine + 1)
-            flash("Fine of " + str(fine))
-        else:
-            flash("No fines")
+            fine = (delta.days + 1) * copy.borrower.type.fine
+            user = models.User.query.filter_by(id=session['userid']).first()
+            user.total_fines += fine
+            flash("Fine of " + str(float(fine)))
         #reset borrow variables
         copy.borrower = None
         copy.borrow_time = None
@@ -241,10 +241,10 @@ def adduser():
         role_student = models.UserType.query.filter_by(name='student').first()
         role_teacher = models.UserType.query.filter_by(name='teacher').first()
         if datatype == 'student':
-            newdata = models.User(name=name)
+            newdata = models.User(name=name, total_fines=Decimal('0'))
             newdata.type = role_student
         elif datatype == 'teacher':
-            newdata = models.User(name=name)
+            newdata = models.User(name=name, total_fines=Decimal('0'))
             newdata.type = role_teacher
         elif datatype == 'author':
             newdata = models.Author(name=name)

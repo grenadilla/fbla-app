@@ -2,14 +2,18 @@
 #Open in idle with exec(open('testdata.py').read())
 
 from app import db, models
+from decimal import Decimal
 
 def addData():
-    u = models.User(name='jeff')
-    a = models.Author(name='arthur')
-    b = models.Book(title='Testy Book', borrower = u, author = a)
+    ut = models.UserType.query.filter_by(name='student').first()
+    u = models.User(name='Jeffrey', type=ut, total_fines=Decimal('0'))
+    a = models.Author(name='John Smith')
+    b = models.Book(title='Biography', author=a)
+    c = models.Copy(book=b, borrower=u)
     db.session.add(u)
     db.session.add(a)
     db.session.add(b)
+    db.session.add(c)
 
 def deleteData():
     users = models.User.query.all()

@@ -14,6 +14,7 @@ class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), index=True, unique=True)
+    total_fines = db.Column(db.Float(asdecimal=True))
     books = db.relationship('Copy', backref='borrower')
     type_id = db.Column(db.Integer, db.ForeignKey('usertypes.id'))
 
