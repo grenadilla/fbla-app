@@ -6,17 +6,23 @@ class UserType(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(16), index=True, unique=True)
     borrow_length = db.Column(db.Interval())
-    fine = db.Column(db.Float(asdecimal=True))
+    fine = db.Column(db.Integer())
     users = db.relationship('User', backref='type')
+
+    def dec_fine(self):
+        return self.fine / 100
 
 
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), index=True, unique=True)
-    total_fines = db.Column(db.Float(asdecimal=True))
+    total_fines = db.Column(db.Integer())
     books = db.relationship('Copy', backref='borrower')
     type_id = db.Column(db.Integer, db.ForeignKey('usertypes.id'))
+
+    def dec_total_fines(self):
+        return self.total_fines / 100
 
     def __repr__(self):
         return '<User %r>' % (self.name)

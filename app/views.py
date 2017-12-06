@@ -1,16 +1,15 @@
 from flask import render_template, session, redirect, url_for, flash, request
 from sqlalchemy import func
 import datetime
-from decimal import Decimal
 from app import app, db, models, forms
 
 # create tables for author query if tables do not exist
 db.create_all()
 if models.UserType.query.filter_by(name='student').first() is None:
-    role_student = models.UserType(name='student', borrow_length=datetime.timedelta(14), fine=Decimal('0.50'))
+    role_student = models.UserType(name='student', borrow_length=datetime.timedelta(14), fine=50)
     db.session.add(role_student)
 if models.UserType.query.filter_by(name='teacher').first() is None:
-    role_teacher = models.UserType(name='teacher', borrow_length=datetime.timedelta(28), fine=Decimal('0.20'))
+    role_teacher = models.UserType(name='teacher', borrow_length=datetime.timedelta(28), fine=20)
     db.session.add(role_teacher)
 db.session.commit()
 
@@ -77,11 +76,13 @@ def edituser(id):
         return redirect(redirect_url())
 
     user = models.User.query.filter_by(id=id).first()
-    form = forms.EditUser(name=user.name)
+    form = forms.EditUser(name=user.name, type=user.type.name)
     form_title = "Edit user " + user.name
     if form.validate_on_submit():
-        flash("Changed user " + user.name + " to " + form.name.data)
+        flash("Changed " + user.type.name + " " + user.name + " to " + form.type.data + " " + form.name.data)
+        usertype = models.UserType.query.filter_by(name=form.type.data).first()
         user.name = form.name.data
+        user.type = usertype
         db.session.commit()
         #If edited user is logged in, change log in data too
         if 'userid' in session and session['userid'] == user.id:
@@ -170,9 +171,7 @@ def returnbook(id):
             fine = (delta.days + 1) * copy.borrower.type.fine
             user = models.User.query.filter_by(id=session['userid']).first()
             user.total_fines += fine
-            #Round to two places
-            user.total_fines = user.total_fines.quantize(Decimal(10)**-2)
-            flash("Fine of " + str(float(fine)))
+            flash("Fine of " + str(fine / 100))
         #reset borrow variables
         copy.borrower = None
         copy.borrow_time = None
@@ -243,10 +242,10 @@ def adduser():
         role_student = models.UserType.query.filter_by(name='student').first()
         role_teacher = models.UserType.query.filter_by(name='teacher').first()
         if datatype == 'student':
-            newdata = models.User(name=name, total_fines=Decimal('0'))
+            newdata = models.User(name=name, total_fines=0)
             newdata.type = role_student
         elif datatype == 'teacher':
-            newdata = models.User(name=name, total_fines=Decimal('0'))
+            newdata = models.User(name=name, total_fines=0)
             newdata.type = role_teacher
         elif datatype == 'author':
             newdata = models.Author(name=name)

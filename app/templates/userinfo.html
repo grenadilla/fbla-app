@@ -29,7 +29,7 @@
         </tr>
         <tr>
             <th scope="row">Fines</th>
-            <td>{{ '$' ~ user.total_fines|float }}</td>
+            <td>{{ '$' ~ '%0.2f'| format(user.dec_total_fines()|float)}}</td>
         </tr>
     </table>
     <hr>
