@@ -1,3 +1,7 @@
 .clickable-link{
     cursor: pointer;
 }
+
+.cancel-button{
+    display: inline-block;
+}
