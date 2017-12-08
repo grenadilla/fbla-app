@@ -20,7 +20,7 @@
     <form method="POST">
     {{ form.hidden_tag() }}
     {% for field in form if field.widget.input_type != 'hidden' %}
-        {{ wtf.form_field(field) }}
+        {{ wtf.form_field(field, autocomplete="off") }}
     {% endfor %}
     <input class="btn btn-warning my-2 my-sm-0 cancel-button" type="submit" value="Cancel"></input>
     </form>

@@ -294,6 +294,17 @@ def addbook():
         return redirect(redirect_url())
     return render_template('basicform.html', form=form, login=login)
 
+@app.route('/fines', methods=['GET', 'POST'])
+def fines():
+    login = forms.Login()
+    if login.validate_on_submit():
+        signin(login.login_data.data)
+        return redirect(redirect_url())
+
+    users = models.User.query.filter(models.User.total_fines > 0)
+    return render_template('fines.html', users=users, login=login)
+
+
 def signin(data):
     #given login data checks database and signs in
     data.strip()
