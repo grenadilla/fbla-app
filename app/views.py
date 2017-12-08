@@ -147,7 +147,7 @@ def borrow(id):
             if 'userid' in session:
                 user = models.User.query.filter_by(id=session['userid']).first()
                 copy.borrower = user
-                time = datetime.datetime.now()
+                time = datetime.datetime.utcnow()
                 copy.borrow_time = time.replace(microsecond=0)
                 copy.return_time = copy.borrow_time + user.type.borrow_length
                 db.session.commit()
@@ -166,7 +166,7 @@ def returnbook(id):
     copy = models.Copy.query.filter_by(id=id).first()
     if 'userid' in session and copy.borrower_id == session['userid']:
         #calculate fines
-        delta = datetime.datetime.now() - copy.return_time
+        delta = datetime.datetime.utcnow() - copy.return_time
         if delta > datetime.timedelta(0):
             fine = (delta.days + 1) * copy.borrower.type.fine
             user = models.User.query.filter_by(id=session['userid']).first()

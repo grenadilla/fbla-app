@@ -6,7 +6,7 @@ from decimal import Decimal
 
 def addData():
     ut = models.UserType.query.filter_by(name='student').first()
-    u = models.User(name='Jeffrey', type=ut, total_fines=Decimal('0'))
+    u = models.User(name='Jeffrey', type=ut, total_fines=0)
     a = models.Author(name='John Smith')
     b = models.Book(title='Biography', author=a)
     c = models.Copy(book=b)
