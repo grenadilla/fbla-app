@@ -1,5 +1,5 @@
 from app import db
-
+import datetime
 
 class UserType(db.Model):
     __tablename__ = 'usertypes'
@@ -67,6 +67,9 @@ class Copy(db.Model):
     borrow_time = db.Column(db.DateTime)
     return_time = db.Column(db.DateTime)
     #title = db.Column(db.String, db.ForeignKey('books.title'))
+
+    def is_overdue(self):
+        return datetime.datetime.utcnow() > self.return_time
 
     def __repr__(self):
         return '<Book-Copy %r, id:%r>' % (self.title_text, self.id)

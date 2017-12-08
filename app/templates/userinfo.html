@@ -40,13 +40,19 @@
             <th>Copy ID</th>
             <th>Title</th>
             <th>Author</th>
+            <th>Due Date</th>
         </thead>
         {% for copy in user.books %}
+            {% if copy.is_overdue() %}
+            <tr class="danger">
+            {% else %}
             <tr>
-                <td class="clickable-link"  data-href={{ url_for('book', id=copy.book_id) }}>{{ copy.book_id }}</td>
-                <td class="clickable-link"  data-href={{ url_for('book', id=copy.book.id) }}>{{ copy.id }}</td>
-                <td class="clickable-link"  data-href={{ url_for('book', id=copy.book.id) }}>{{ copy.book.title }}</td>
+            {% endif %}
+                <td class="clickable-link" data-href={{ url_for('book', id=copy.book_id) }}>{{ copy.book_id }}</td>
+                <td class="clickable-link" data-href={{ url_for('book', id=copy.book.id) }}>{{ copy.id }}</td>
+                <td class="clickable-link" data-href={{ url_for('book', id=copy.book.id) }}>{{ copy.book.title }}</td>
                 <td class="clickable-link" data-href={{ url_for('author', id=copy.book.author_id) }}>{{ copy.book.author.name }}</td>
+                <td class="clickable-link" data-href={{ url_for('book', id=copy.book.id) }}>{{ copy.return_time }}</td>
             </tr>
         {% endfor %}
     </table>
