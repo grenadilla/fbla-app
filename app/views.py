@@ -7,6 +7,7 @@ from app import app, db, models, forms
 db.create_all()
 if models.UserType.query.filter_by(name='student').first() is None:
     role_student = models.UserType(name='student', borrow_length=datetime.timedelta(14), fine=50)
+    
     db.session.add(role_student)
 if models.UserType.query.filter_by(name='teacher').first() is None:
     role_teacher = models.UserType(name='teacher', borrow_length=datetime.timedelta(28), fine=20)
@@ -312,7 +313,7 @@ def borrowedbooks():
         signin(login.login_data.data)
         return redirect(redirect_url())
 
-    copies = models.Copy.query.filter(models.Copy.borrower is not None).all()
+    copies = models.Copy.query.filter(models.Copy.borrower != None).all()
     return render_template('borrowedbooks.html', copies=copies, login=login)
 
 
