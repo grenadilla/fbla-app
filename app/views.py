@@ -305,6 +305,17 @@ def fines():
     return render_template('fines.html', users=users, login=login)
 
 
+@app.route('/borrowedbooks', methods=['GET', 'POST'])
+def borrowedbooks():
+    login = forms.Login()
+    if login.validate_on_submit():
+        signin(login.login_data.data)
+        return redirect(redirect_url())
+
+    copies = models.Copy.query.filter(models.Copy.borrower is not None).all()
+    return render_template('borrowedbooks.html', copies=copies, login=login)
+
+
 def signin(data):
     #given login data checks database and signs in
     data.strip()

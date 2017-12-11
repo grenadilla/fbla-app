@@ -73,4 +73,4 @@ class Copy(db.Model):
         return datetime.datetime.utcnow() > self.return_time
 
     def __repr__(self):
-        return '<Book-Copy %r, id:%r>' % (self.title_text, self.id)
+        return '<Book-Copy %r, id:%r>' % (self.book.title, self.id)
