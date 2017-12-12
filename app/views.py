@@ -6,11 +6,11 @@ from app import app, db, models, forms
 # create tables for author query if tables do not exist
 db.create_all()
 if models.UserType.query.filter_by(name='student').first() is None:
-    role_student = models.UserType(name='student', borrow_length=datetime.timedelta(14), fine=50)
+    role_student = models.UserType(name='student', borrow_length=datetime.timedelta(14), fine=50, book_limit=5)
     
     db.session.add(role_student)
 if models.UserType.query.filter_by(name='teacher').first() is None:
-    role_teacher = models.UserType(name='teacher', borrow_length=datetime.timedelta(28), fine=20)
+    role_teacher = models.UserType(name='teacher', borrow_length=datetime.timedelta(28), fine=20, book_limit=10)
     db.session.add(role_teacher)
 db.session.commit()
 
@@ -147,13 +147,16 @@ def borrow(id):
             #If user is logged in, user borrows first available copy of book
             if 'userid' in session:
                 user = models.User.query.filter_by(id=session['userid']).first()
-                copy.borrower = user
-                time = datetime.datetime.utcnow()
-                copy.borrow_time = time.replace(microsecond=0)
-                copy.return_time = copy.borrow_time + user.type.borrow_length
-                db.session.commit()
-                flash(session['username'] + " borrowed " + book.title)
-                return redirect(redirect_url())
+                if len(user.books) >= user.type.borrow_limit:
+                    flash('You have reached your borrow limit. Please return another book to borrow this book')
+                else:
+                    copy.borrower = user
+                    time = datetime.datetime.utcnow()
+                    copy.borrow_time = time.replace(microsecond=0)
+                    copy.return_time = copy.borrow_time + user.type.borrow_length
+                    db.session.commit()
+                    flash(session['username'] + " borrowed " + book.title)
+                    return redirect(redirect_url())
             else:
                 flash("Please login to borrow a book")
                 return redirect(redirect_url())
