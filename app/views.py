@@ -7,7 +7,7 @@ from app import app, db, models, forms
 db.create_all()
 if models.UserType.query.filter_by(name='student').first() is None:
     role_student = models.UserType(name='student', borrow_length=datetime.timedelta(14), fine=50, book_limit=5)
-    
+
     db.session.add(role_student)
 if models.UserType.query.filter_by(name='teacher').first() is None:
     role_teacher = models.UserType(name='teacher', borrow_length=datetime.timedelta(28), fine=20, book_limit=10)
@@ -134,6 +134,34 @@ def editbook(id):
         db.session.commit()
         return redirect(url_for("book", id=book.id))
     return render_template('basicform.html', form_title=form_title, form=form, login=login)
+
+@app.route('/edit/usertypes', methods=['Get', 'POST'])
+def editusertypes():
+    login = forms.Login()
+    if login.validate_on_submit():
+        signin(login.login_data.data)
+        return redirect(redirect_url())
+
+    student = models.UserType.query.filter_by(name='student').first()
+    teacher = models.UserType.query.filter_by(name='teacher').first()
+
+    form = forms.EditUserType(student_borrow_length=student.borrow_length.days,
+                              student_fine=student.fine,
+                              student_book_limit=student.book_limit,
+                              teacher_borrow_length=teacher.borrow_length.days,
+                              teacher_fine=teacher.fine,
+                              teacher_book_limit=teacher.book_limit)
+
+    if form.validate_on_submit():
+        student.borrow_length = datetime.timedelta(form.student_borrow_length.data)
+        student.fine = form.student_fine.data
+        student.book_limit = form.student_book_limit.data
+        teacher.borrow_length = datetime.timedelta(form.teacher_borrow_length.data)
+        teacher.fine = form.teacher_fine.data
+        teacher.book_limit = form.teacher_book_limit.data
+        db.session.commit()
+        flash("Updated user settings")
+    return render_template("basicform.html", form=form, student=student, teacher=teacher, login=login)
 
 
 @app.route('/borrow/<id>', methods=['GET'])
