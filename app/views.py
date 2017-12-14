@@ -6,11 +6,16 @@ from app import app, db, models, forms
 # create tables for author query if tables do not exist
 db.create_all()
 if models.UserType.query.filter_by(name='student').first() is None:
-    role_student = models.UserType(name='student', borrow_length=datetime.timedelta(14), fine=50, book_limit=5)
-
+    role_student = models.UserType(name='student',
+                                   borrow_length=datetime.timedelta(14),
+                                   fine=50,
+                                   book_limit=5)
     db.session.add(role_student)
 if models.UserType.query.filter_by(name='teacher').first() is None:
-    role_teacher = models.UserType(name='teacher', borrow_length=datetime.timedelta(28), fine=20, book_limit=10)
+    role_teacher = models.UserType(name='teacher',
+                                   borrow_length=datetime.timedelta(28),
+                                   fine=20,
+                                   book_limit=10)
     db.session.add(role_teacher)
 db.session.commit()
 
@@ -18,7 +23,7 @@ db.session.commit()
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 def index():
-    #add below login stuff to all pages
+    # add below login stuff to all pages
     login = forms.Login()
     if login.validate_on_submit():
         signin(login.login_data.data)
@@ -28,7 +33,7 @@ def index():
 
 @app.route('/user/<id>', methods=['GET', 'POST'])
 def user(id):
-    #Given an id, queries it from db and passes user object to page
+    # Given an id, queries it from db and passes user object to page
     login = forms.Login()
     if login.validate_on_submit():
         signin(login.login_data.data)
@@ -37,9 +42,11 @@ def user(id):
     user = models.User.query.filter_by(id=id).first()
     return render_template('userinfo.html', user=user, login=login)
 
-@app.route('/author/<id>', methods=['GET','POST'])
+
+@app.route('/author/<id>', methods=['GET', 'POST'])
 def author(id):
-    #Given id, queries it from the database and passes the correct author object to page
+    # Given id, queries it from the database and passes the correct
+    # author object to page
     login = forms.Login()
     if login.validate_on_submit():
         signin(login.login_data.data)
@@ -51,8 +58,8 @@ def author(id):
 
 @app.route('/book/<id>', methods=['GET', 'POST'])
 def book(id):
-    #Given book (not copy) id, queries it and passes book data to page to display
-    #Book info page, from here can borrow a book
+    # Given book (not copy) id, queries it and passes book data to page to
+    # display book info page, from here can borrow a book
     login = forms.Login()
     if login.validate_on_submit():
         signin(login.login_data.data)
@@ -60,17 +67,21 @@ def book(id):
 
     book = models.Book.query.filter_by(id=id).first()
 
-    #Checks if user has borrowed a book, passes id of borrowed copy (0 if not borrowed)
+    # Checks if user has borrowed a book, passes id of borrowed
+    # copy (0 if not borrowed)
     borrowed_id = 0
     for copy in book.copies:
         if 'userid' in session and session['userid'] == copy.borrower_id:
             borrowed_id = copy.id
-    return render_template('bookinfo.html', book=book, login=login, borrowed_id=borrowed_id)
+    return render_template('bookinfo.html',
+                           book=book,
+                           login=login,
+                           borrowed_id=borrowed_id)
 
 
 @app.route('/edit/user/<id>', methods=['GET', 'POST'])
 def edituser(id):
-    #Page to edit user data like name
+    # Page to edit user data like name
     login = forms.Login()
     if login.validate_on_submit():
         signin(login.login_data.data)
@@ -80,21 +91,25 @@ def edituser(id):
     form = forms.EditUser(name=user.name, type=user.type.name)
     form_title = "Edit user " + user.name
     if form.validate_on_submit():
-        flash("Changed " + user.type.name + " " + user.name + " to " + form.type.data + " " + form.name.data)
+        flash("Changed " + user.type.name + " " + user.name + " to "
+              + form.type.data + " " + form.name.data)
         usertype = models.UserType.query.filter_by(name=form.type.data).first()
         user.name = form.name.data
         user.type = usertype
         db.session.commit()
-        #If edited user is logged in, change log in data too
+        # If edited user is logged in, change log in data too
         if 'userid' in session and session['userid'] == user.id:
             session['username'] = user.name
         return redirect(url_for('user', id=user.id))
-    return render_template('basicform.html', form_title=form_title, form=form, login=login)
+    return render_template('basicform.html',
+                           form_title=form_title,
+                           form=form,
+                           login=login)
 
 
 @app.route('/edit/author/<id>', methods=['GET', 'POST'])
 def editauthor(id):
-    #Page to edit author data like name
+    # Page to edit author data like name
     login = forms.Login()
     if login.validate_on_submit():
         signin(login.login_data.data)
@@ -108,12 +123,15 @@ def editauthor(id):
         author.name = form.name.data
         db.session.commit()
         return redirect(url_for("author", id=author.id))
-    return render_template('basicform.html', form_title=form_title, form=form, login=login)
+    return render_template('basicform.html',
+                           form_title=form_title,
+                           form=form,
+                           login=login)
 
 
 @app.route('/edit/book/<id>', methods=['GET', 'POST'])
 def editbook(id):
-    #Page to edit book data like title and author
+    # Page to edit book data like title and author
     login = forms.Login()
     if login.validate_on_submit():
         signin(login.login_data.data)
@@ -133,7 +151,11 @@ def editbook(id):
         book.author = models.Author.query.filter_by(id=int(form.author.data)).first()
         db.session.commit()
         return redirect(url_for("book", id=book.id))
-    return render_template('basicform.html', form_title=form_title, form=form, login=login)
+    return render_template('basicform.html',
+                           form_title=form_title,
+                           form=form,
+                           login=login)
+
 
 @app.route('/edit/usertypes', methods=['Get', 'POST'])
 def editusertypes():
@@ -161,22 +183,27 @@ def editusertypes():
         teacher.book_limit = form.teacher_book_limit.data
         db.session.commit()
         flash("Updated user settings")
-    return render_template("basicform.html", form=form, student=student, teacher=teacher, login=login)
+    return render_template("basicform.html",
+                           form=form,
+                           student=student,
+                           teacher=teacher,
+                           login=login)
 
 
 @app.route('/borrow/<id>', methods=['GET'])
 def borrow(id):
-    #Page to borrow a book, accessed by redirect from book page
-    #Does not display page, instead redirects to previous page
-    #ID is book ID, not copy ID
+    # Page to borrow a book, accessed by redirect from book page
+    # Does not display page, instead redirects to previous page
+    # ID is book ID, not copy ID
     book = models.Book.query.filter_by(id=id).first()
     for copy in book.copies:
         if copy.borrower is None:
-            #If user is logged in, user borrows first available copy of book
+            # If user is logged in, user borrows first available copy of book
             if 'userid' in session:
                 user = models.User.query.filter_by(id=session['userid']).first()
                 if len(user.books) >= user.type.borrow_limit:
-                    flash('You have reached your borrow limit. Please return another book to borrow this book')
+                    flash('You have reached your borrow limit. '
+                          'Please return another book to borrow this book')
                 else:
                     copy.borrower = user
                     time = datetime.datetime.utcnow()
@@ -194,17 +221,17 @@ def borrow(id):
 
 @app.route('/returnbook/<id>', methods=['GET'])
 def returnbook(id):
-    #URL to return the copy of a book. Id is copy ID, not book ID
+    # URL to return the copy of a book. Id is copy ID, not book ID
     copy = models.Copy.query.filter_by(id=id).first()
     if 'userid' in session and copy.borrower_id == session['userid']:
-        #calculate fines
+        # calculate fines
         delta = datetime.datetime.utcnow() - copy.return_time
         if delta > datetime.timedelta(0):
             fine = (delta.days + 1) * copy.borrower.type.fine
             user = models.User.query.filter_by(id=session['userid']).first()
             user.total_fines += fine
             flash("Fine of " + str(fine / 100))
-        #reset borrow variables
+        # reset borrow variables
         copy.borrower = None
         copy.borrow_time = None
         copy.return_time = None
@@ -217,8 +244,8 @@ def returnbook(id):
 
 @app.route('/data', methods=['GET', 'POST'])
 def data():
-    #Currently displays data from db. Delete later
-    #Can delete all data from here
+    # Currently displays data from db. Delete later
+    # Can delete all data from here
     login = forms.Login()
     if login.validate_on_submit():
         signin(login.login_data.data)
@@ -238,27 +265,29 @@ def data():
         flash("Deleted all data")
         return redirect(redirect_url())
     return render_template('data.html',
-                            users=models.User.query.all(),
-                            authors=models.Author.query.all(),
-                            books=models.Book.query.all(),
-                            copies=models.Copy.query.all(),
-                            form=form,
-                            login=login)
+                           users=models.User.query.all(),
+                           authors=models.Author.query.all(),
+                           books=models.Book.query.all(),
+                           copies=models.Copy.query.all(),
+                           form=form,
+                           login=login)
 
-@app.route('/catalog', methods=['GET','POST'])
+
+@app.route('/catalog', methods=['GET', 'POST'])
 def catalog():
-    #Catalog of all books
+    # Catalog of all books
     login = forms.Login()
     if login.validate_on_submit():
         signin(login.login_data.data)
         return redirect(redirect_url())
     return render_template('catalog.html',
-                            books=models.Book.query.all(),
-                            login=login)
+                           books=models.Book.query.all(),
+                           login=login)
 
-@app.route('/adduser', methods=['GET','POST'])
+
+@app.route('/adduser', methods=['GET', 'POST'])
 def adduser():
-    #Add a new user or author
+    # Add a new user or author
     login = forms.Login()
     if login.validate_on_submit():
         signin(login.login_data.data)
@@ -283,14 +312,15 @@ def adduser():
             newdata = models.Author(name=name)
         db.session.add(newdata)
         db.session.commit()
-        flash("Added new " + datatype + " with name " + newdata.name + " with ID " + str(newdata.id))
+        flash("Added new " + datatype + " with name "
+              + newdata.name + " with ID " + str(newdata.id))
         return redirect(redirect_url())
     return render_template('basicform.html', form=form, login=login)
 
 
-@app.route('/addbook', methods=['GET','POST'])
+@app.route('/addbook', methods=['GET', 'POST'])
 def addbook():
-    #Add a new book
+    # Add a new book
     login = forms.Login()
     if login.validate_on_submit():
         signin(login.login_data.data)
@@ -322,9 +352,13 @@ def addbook():
             copy = models.Copy(book=book)
             db.session.add(copy)
         db.session.commit()
-        flash("Added new " + str(copies) + " book(s) with title " + title + " with book ID " + str(book.id))
+        flash("Added new " + str(copies) + " book(s) with title "
+              + title + " with book ID " + str(book.id))
         return redirect(redirect_url())
-    return render_template('basicform.html', form=form, login=login)
+    return render_template('basicform.html',
+                           form=form,
+                           login=login)
+
 
 @app.route('/fines', methods=['GET', 'POST'])
 def fines():
@@ -349,7 +383,7 @@ def borrowedbooks():
 
 
 def signin(data):
-    #given login data checks database and signs in
+    # given login data checks database and signs in
     data.strip()
     if data.isdigit():
         user = models.User.query.filter_by(id=data).first()
@@ -370,7 +404,7 @@ def signin(data):
 
 
 def redirect_url(default='index'):
-    #Returns previous url
+    # Returns previous url
     return request.args.get('next') or \
            request.referrer or \
            url_for(default)
