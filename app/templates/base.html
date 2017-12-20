@@ -1,5 +1,15 @@
 {% extends "bootstrap/base.html" %}
 
+{% block scripts %}
+{{ super() }}
+<script type="text/javascript" src={{ url_for('static', filename='links.js') }}></script>
+{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" href={{ url_for('static', filename='style.css') }}>
+{% endblock %}
+
 {% block navbar %}
 <div class="navbar navbar-inverse" role="navigation">
     <div class="container">
@@ -20,8 +30,13 @@
                 {% endif %}
                 <li><a href={{ url_for("catalog", _external=True)}}>Catalog</a></li>
                 <li><a href={{ url_for("data", _external=True) }}>Data</a></li>
-                <li><a href={{ url_for("adduser", _external=True) }}>Add a User</a></li>
-                <li><a href={{ url_for("addbook", _external=True) }}>Add a Book</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Add <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href={{ url_for("adduser", _external=True) }}>Add a User</a></li>
+                        <li><a class="dropdown-item" href={{ url_for("addbook", _external=True) }}>Add a Book</a></li>
+                    </ul>
+                </li>
                 <li><a href={{ url_for("fines", _external=True) }}>Fines</a></li>
                 <li><a href={{ url_for("borrowedbooks", _external=True) }}>Borrowed Books</a></li>
                 <li><a href={{ url_for("editusertypes", _external=True) }}>User Settings</a></li>

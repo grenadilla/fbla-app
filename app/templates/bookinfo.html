@@ -2,15 +2,6 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% block page_content %}
 
-{% block scripts %}
-{{ super() }}
-<script type="text/javascript" src={{ url_for('static', filename='links.js') }}></script>
-{% endblock %}
-
-{% block style %}
-<link rel="stylesheet" href={{ url_for('static', filename='style.css') }}>
-{% endblock %}
-
 <div class="container">
     <h3 style="display: inline-block">Book</h3>
     <a class="btn btn-default" style="display: inline-block" href={{ url_for('editbook', _external=True, id=book.id )}}>Edit</a>
