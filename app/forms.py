@@ -4,9 +4,13 @@ from wtforms.validators import Required
 from app import db, models
 
 
-class NewData(FlaskForm):
-    type = SelectField("Student, Teacher, or Author?", choices=[('student', 'Student'), ('teacher', 'Teacher'), ('author', 'Author')], validators=[Required()])
-    name = StringField("Name of user or author", validators=[Required()])
+class NewUser(FlaskForm):
+    type = SelectField("Student or Teacher?", choices=[('student', 'Student'), ('teacher', 'Teacher')], validators=[Required()])
+    name = StringField("Name of user", validators=[Required()])
+    submit = SubmitField('Submit')
+
+class NewAuthor(FlaskForm):
+    name = StringField("Name of author", validators=[Required()])
     submit = SubmitField('Submit')
 
 

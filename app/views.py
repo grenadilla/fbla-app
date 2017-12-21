@@ -285,7 +285,7 @@ def catalog():
                            login=login)
 
 
-@app.route('/adduser', methods=['GET', 'POST'])
+@app.route('/add/user', methods=['GET', 'POST'])
 def adduser():
     # Add a new user or author
     login = forms.Login()
@@ -294,7 +294,7 @@ def adduser():
         return redirect(redirect_url())
 
     name = None
-    form = forms.NewData()
+    form = forms.NewUser()
     if form.validate_on_submit():
         name = form.name.data
         datatype = form.type.data
@@ -308,8 +308,6 @@ def adduser():
         elif datatype == 'teacher':
             newdata = models.User(name=name, total_fines=0)
             newdata.type = role_teacher
-        elif datatype == 'author':
-            newdata = models.Author(name=name)
         db.session.add(newdata)
         db.session.commit()
         flash("Added new " + datatype + " with name "
@@ -317,8 +315,26 @@ def adduser():
         return redirect(redirect_url())
     return render_template('basicform.html', form=form, login=login)
 
+@app.route('/add/author', methods=['GET', 'POST'])
+def addauthor():
+    # Add a new author
+    login = forms.Login()
+    if login.validate_on_submit():
+        signin(login.login_data.data)
+        return redirect(redirect_url())
 
-@app.route('/addbook', methods=['GET', 'POST'])
+    form = forms.NewAuthor()
+    if form.validate_on_submit():
+        name = form.name.data
+        author = models.Author(name=name)
+        db.session.add(author)
+        db.session.commit()
+        flash("Added new author with name " + name +  " with ID " + str(author.id))
+        return redirect(redirect_url())
+    return render_template('basicform.html', form=form, login=login)
+
+
+@app.route('/add/book', methods=['GET', 'POST'])
 def addbook():
     # Add a new book
     login = forms.Login()

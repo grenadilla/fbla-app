@@ -1,4 +1,4 @@
-#!flask/bin/python3
+#!/home/jeffrey/flasktest/flask/bin/python3
 from app import app
 
 
