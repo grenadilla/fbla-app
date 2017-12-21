@@ -190,6 +190,25 @@ def editusertypes():
                            login=login)
 
 
+@app.route('/delete/user/<id>', methods=['GET', 'POST'])
+def deleteuser(id):
+    login = forms.Login()
+    if login.validate_on_submit():
+        signin(login.login_data.data)
+        return redirect(redirect_url())
+    
+    user = models.User.query.filter_by(id=id).first()
+    if user is not None:
+        flash("Deleted user " + user.name + " ID: " + str(user.id))
+        if int(session['userid']) == user.id:
+            session['userid'] = None
+            session['username'] = None
+        db.session.delete(user)
+        db.session.commit()
+
+    return redirect(url_for('index'))
+
+
 @app.route('/borrow/<id>', methods=['GET'])
 def borrow(id):
     # Page to borrow a book, accessed by redirect from book page
@@ -297,21 +316,24 @@ def adduser():
     form = forms.NewUser()
     if form.validate_on_submit():
         name = form.name.data
-        datatype = form.type.data
-        form.name.data = ''
-        form.type.data = ''
-        role_student = models.UserType.query.filter_by(name='student').first()
-        role_teacher = models.UserType.query.filter_by(name='teacher').first()
-        if datatype == 'student':
-            newdata = models.User(name=name, total_fines=0)
-            newdata.type = role_student
-        elif datatype == 'teacher':
-            newdata = models.User(name=name, total_fines=0)
-            newdata.type = role_teacher
-        db.session.add(newdata)
-        db.session.commit()
-        flash("Added new " + datatype + " with name "
-              + newdata.name + " with ID " + str(newdata.id))
+        if db.session.query(db.exists().where(models.User.name == name)).scalar():
+            flash("A user with name " + name + " already exists. Please choose a different name")
+        else:
+            datatype = form.type.data
+            form.name.data = ''
+            form.type.data = ''
+            role_student = models.UserType.query.filter_by(name='student').first()
+            role_teacher = models.UserType.query.filter_by(name='teacher').first()
+            if datatype == 'student':
+                newdata = models.User(name=name, total_fines=0)
+                newdata.type = role_student
+            elif datatype == 'teacher':
+                newdata = models.User(name=name, total_fines=0)
+                newdata.type = role_teacher
+            db.session.add(newdata)
+            db.session.commit()
+            flash("Added new " + datatype + " with name "
+                  + newdata.name + " with ID " + str(newdata.id))
         return redirect(redirect_url())
     return render_template('basicform.html', form=form, login=login)
 
@@ -326,10 +348,13 @@ def addauthor():
     form = forms.NewAuthor()
     if form.validate_on_submit():
         name = form.name.data
-        author = models.Author(name=name)
-        db.session.add(author)
-        db.session.commit()
-        flash("Added new author with name " + name +  " with ID " + str(author.id))
+        if db.session.query(db.exists().where(models.Author.name == name)).scalar():
+            flash("A author with name " + name + " already exists. Please choose a different name")
+        else:
+            author = models.Author(name=name)
+            db.session.add(author)
+            db.session.commit()
+            flash("Added new author with name " + name +  " with ID " + str(author.id))
         return redirect(redirect_url())
     return render_template('basicform.html', form=form, login=login)
 

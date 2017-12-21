@@ -4,6 +4,7 @@ import datetime
 class UserType(db.Model):
     __tablename__ = 'usertypes'
     id = db.Column(db.Integer, primary_key=True)
+    #Add back unique=True later
     name = db.Column(db.String(16), index=True, unique=True)
     borrow_length = db.Column(db.Interval())
     fine = db.Column(db.Integer())
