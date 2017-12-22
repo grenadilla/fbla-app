@@ -43,23 +43,15 @@
     <table class="table table-bordered table-hover">
         <thead>
             <th>Book ID</th>
-            <th>Copy ID</th>
             <th>Title</th>
-            <th>Borrowed By</th>
+            <th>Available</th>
         </thead>
         {% for book in author.books %}
-        {% for copy in book.copies %}
-            <tr>
-                <td class="clickable-link" data-href={{ url_for('book', id=book.id) }}>{{ book.id }}</td>
-                <td class="clickable-link" data-href={{ url_for('book', id=book.id) }}>{{ copy.id }}</td>
-                <td class="clickable-link" data-href={{ url_for('book', id=book.id) }}>{{ book.title }}</td>
-                {% if copy.borrower is none %}
-                    <td>Available</td>
-                {% else %}
-                    <td class="clickable-link" data-href={{ url_for('user', id=copy.borrower_id) }}>{{ copy.borrower.name }}</td>
-                {% endif %}
+            <tr class="clickable-link" data-href={{ url_for('book', id=book.id) }}>
+                <td>{{ book.id }}</td>
+                <td>{{ book.title }}</td>
+                <td>{{ book.available() ~ '/' ~ book.copies|length  }}</td>
             </tr>
-        {% endfor %}
         {% endfor %}
     </table>
 </div>
