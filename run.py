@@ -1,4 +1,4 @@
-#!/home/jeffrey/flasktest/flask/bin/python3
+#!/home/jeffrey/fbla-app/venv/bin/python3
 from app import app
 
 
