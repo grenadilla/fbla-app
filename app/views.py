@@ -432,8 +432,11 @@ def addbook():
             copy = models.Copy(book=book)
             db.session.add(copy)
         db.session.commit()
-        flash("Added new " + str(copies) + " book(s) with title "
-              + title + " with book ID " + str(book.id))
+        if copies == 1:
+            flash("Added a new book. Title: " + title + ", ID: " + str(book.id))
+        else:
+            flash("Added a new book. Title: " + title + ", ID: " + str(book.id)
+                    + ", Copies: " + str(copies))
         return redirect(redirect_url())
     return render_template('basicform.html',
                            form=form,
