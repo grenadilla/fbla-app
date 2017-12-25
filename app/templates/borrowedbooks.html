@@ -22,7 +22,7 @@
         {% if copy.is_overdue() %}
             Overdue
         {% else %}
-            {{ copy.time_left().days|string + " days, " +  (copy.time_left().seconds/3600)|int|string + " hours" }}
+            {{ copy.time_left() }}
         {% endif %}
         </td>
     </tr>
