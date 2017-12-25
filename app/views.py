@@ -190,13 +190,8 @@ def editusertypes():
                            login=login)
 
 
-@app.route('/delete/user/<id>', methods=['GET', 'POST'])
+@app.route('/delete/user/<id>', methods=['GET'])
 def deleteuser(id):
-    login = forms.Login()
-    if login.validate_on_submit():
-        signin(login.login_data.data)
-        return redirect(redirect_url())
-    
     user = models.User.query.filter_by(id=id).first()
     if user is not None:
         flash("Deleted user " + user.name + " ID: " + str(user.id))
@@ -205,17 +200,13 @@ def deleteuser(id):
             session['username'] = None
         db.session.delete(user)
         db.session.commit()
+        return redirect(url_for('index'))
 
-    return redirect(url_for('index'))
+    return redirect(redirect_url())
 
 
-@app.route('/delete/author/<id>', methods=['GET', 'POST'])
+@app.route('/delete/author/<id>', methods=['GET'])
 def deleteauthor(id):
-    login = forms.Login()
-    if login.validate_on_submit():
-        signin(login.login_data.data)
-        return redirect(redirect_url())
-    
     author = models.Author.query.filter_by(id=id).first()
     if author is not None:
         flash("Deleted author " + author.name + " ID: " + str(author.id))
@@ -226,17 +217,13 @@ def deleteauthor(id):
             db.session.delete(book)
         db.session.delete(author)
         db.session.commit()
+        return redirect(url_for('index'))
 
-    return redirect(url_for('index'))
+    return redirect(redirect_url())
 
 
-@app.route('/delete/book/<id>', methods=['GET', 'POST'])
+@app.route('/delete/book/<id>', methods=['GET'])
 def deletebook(id):
-    login = forms.Login()
-    if login.validate_on_submit():
-        signin(login.login_data.data)
-        return redirect(redirect_url())
-    
     book = models.Book.query.filter_by(id=id).first()
     if book is not None:
         flash("Deleted book " + book.title + " ID: " + str(book.id))
@@ -244,17 +231,13 @@ def deletebook(id):
             db.session.delete(copy)
         db.session.delete(book)
         db.session.commit()
+        return redirect(url_for('index'))
 
-    return redirect(url_for('index'))
+    return redirect(redirect_url())
 
 
-@app.route('/delete/copy/<id>', methods=['GET', 'POST'])
+@app.route('/delete/copy/<id>', methods=['GET'])
 def deletecopy(id):
-    login = forms.Login()
-    if login.validate_on_submit():
-        signin(login.login_data.data)
-        return redirect(redirect_url())
-    
     copy = models.Copy.query.filter_by(id=id).first()
     book = copy.book
     if copy is not None:
@@ -400,6 +383,7 @@ def adduser():
                   + newdata.name + " with ID " + str(newdata.id))
         return redirect(redirect_url())
     return render_template('basicform.html', form=form, login=login)
+
 
 @app.route('/add/author', methods=['GET', 'POST'])
 def addauthor():
