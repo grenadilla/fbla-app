@@ -248,6 +248,31 @@ def deletebook(id):
     return redirect(url_for('index'))
 
 
+@app.route('/delete/copy/<id>', methods=['GET', 'POST'])
+def deletecopy(id):
+    login = forms.Login()
+    if login.validate_on_submit():
+        signin(login.login_data.data)
+        return redirect(redirect_url())
+    
+    copy = models.Copy.query.filter_by(id=id).first()
+    book = copy.book
+    if copy is not None:
+        flash("Deleted copy of  " + copy.book.title  + " ID: " + str(copy.id))
+        if len(book.copies) == 1:
+            flash("Deleted book " + book.title + " ID: " + str(book.id))
+            db.session.delete(book)
+            db.session.delete(copy)
+            db.session.commit()
+            return redirect(url_for('index'))
+        else:
+            db.session.delete(copy)
+            db.session.commit()
+            return redirect(url_for('book', id=book.id))
+
+    return redirect(redirect_url())
+
+
 @app.route('/borrow/<id>', methods=['GET'])
 def borrow(id):
     # Page to borrow a book, accessed by redirect from book page
