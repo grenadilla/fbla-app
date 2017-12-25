@@ -14,6 +14,9 @@ class UserType(db.Model):
     def dec_fine(self):
         return self.fine / 100
 
+    def __repr__self(self):
+        return '<UserType %r' % (self.name)
+
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -72,6 +75,10 @@ class Copy(db.Model):
 
     def is_overdue(self):
         return datetime.datetime.utcnow() > self.return_time
+
+    def time_left(self):
+        #Returns a timedelta
+        return self.return_time - datetime.datetime.utcnow()
 
     def __repr__(self):
         return '<Book-Copy %r, id:%r>' % (self.book.title, self.id)

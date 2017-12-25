@@ -259,7 +259,7 @@ def borrow(id):
             # If user is logged in, user borrows first available copy of book
             if 'userid' in session:
                 user = models.User.query.filter_by(id=session['userid']).first()
-                if len(user.books) >= user.type.borrow_limit:
+                if len(user.books) >= user.type.book_limit:
                     flash('You have reached your borrow limit. '
                           'Please return another book to borrow this book')
                 else:
