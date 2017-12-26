@@ -365,7 +365,7 @@ def search():
         signin(login.login_data.data)
         return redirect(redirect_url())
 
-    keyword = request.args.get('keyword')
+    keyword = request.args.get('keyword').strip()
     search_type = request.args.get('search_type')
     books = []
     authors = []
@@ -387,10 +387,19 @@ def search():
         books.extend(models.Book.query.filter_by(id=id).all())
         #Adds adds more results without duplicates
         books = list(set(books + models.Book.query.filter(func.lower(models.Book.title) == func.lower(keyword)).all()))
+        books = list(set(books + models.Book.query.filter(models.Book.title.ilike(keyword+' %')).all()))
+        books = list(set(books + models.Book.query.filter(models.Book.title.ilike('% '+keyword)).all()))
+        books = list(set(books + models.Book.query.filter(models.Book.title.ilike('% '+keyword+' %')).all()))
 
     if search_type == 'all' or search_type == 'author':
         authors.extend(models.Author.query.filter_by(id=id).all())
         authors = list(set(authors + models.Author.query.filter(func.lower(models.Author.name) == func.lower(keyword)).all()))
+        # Check last names. First check if keyword is only one word,
+        # Meaning specific search for last name only.
+        # Otherwise check if only last name in general
+        if len(keyword.split()) == 1:
+            authors = list(set(authors + models.Author.query.filter(models.Author.name.ilike('% '+keyword)).all()))
+        authors = list(set(authors + models.Author.query.filter(models.Author.name.ilike('% '+keyword.split()[-1])).all()))
 
     return render_template('search.html', 
                            form=form, 
