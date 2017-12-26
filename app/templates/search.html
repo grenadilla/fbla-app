@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block page_content %}
+<div class="container">
+    <form method="POST">
+    {{ form.hidden_tag() }}
+    {% for field in form if field.widget.input_type != 'hidden' %}
+        {{ wtf.form_field(field, autocomplete="off") }}
+    {% endfor %}
+    </form>
+
+    {% if books|length > 0 %}
+        <h3>Book Results</h3>
+        <table class="table table-hover">
+            <thead>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Available Copies</th>
+            </thead>
+            <tbody>
+            {% for book in books %}
+                <tr>
+                    <td class="clickable-link" data-href={{ url_for('book', id=book.id) }}>{{ book.id }}</td>
+                    <td class="clickable-link" data-href={{ url_for('book', id=book.id) }}>{{ book.title }}</td>
+                    <td class="clickable-link" data-href={{ url_for('author', id=book.author_id) }} >{{ book.author.name }}</td>
+                    <td>{{ book.available() ~ '/' ~ book.copies|length  }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+    {% if authors|length > 0 %}
+        <h3>Author Results</h3>
+        <table class="table table-hover">
+            <thead>
+                <th>ID</th>
+                <th>Name</th>
+            </thead>
+            <tbody>
+            {% for author in authors %}
+                <tr class="clickable-link" data-href={{ url_for('author', id=author.id) }}>
+                    <td>{{ author.id }}</td>     
+                    <td>{{ author.name }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+    {% if books|length == 0 and authors|length == 0 %}
+        <h3>No Results Found</h3>
+    {% endif %}
+</div>
+{% endblock %}
