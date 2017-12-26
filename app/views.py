@@ -88,14 +88,14 @@ def edituser(id):
         return redirect(redirect_url())
 
     user = models.User.query.filter_by(id=id).first()
-    form = forms.EditUser(name=user.name, type=user.type.name)
+    form = forms.EditUser(name=user.name, usertype=user.usertype.name)
     form_title = "Edit user " + user.name
     if form.validate_on_submit():
-        flash("Changed " + user.type.name + " " + user.name + " to "
-              + form.type.data + " " + form.name.data)
-        usertype = models.UserType.query.filter_by(name=form.type.data).first()
+        flash("Changed " + user.usertype.name + " " + user.name + " to "
+              + form.usertype.data + " " + form.name.data)
+        usertype = models.UserType.query.filter_by(name=form.usertype.data).first()
         user.name = form.name.data
-        user.type = usertype
+        user.usertype = usertype
         db.session.commit()
         # If edited user is logged in, change log in data too
         if 'userid' in session and session['userid'] == user.id:
@@ -267,14 +267,14 @@ def borrow(id):
             # If user is logged in, user borrows first available copy of book
             if 'userid' in session:
                 user = models.User.query.filter_by(id=session['userid']).first()
-                if len(user.books) >= user.type.book_limit:
+                if len(user.books) >= user.usertype.book_limit:
                     flash('You have reached your borrow limit. '
                           'Please return another book to borrow this book')
                 else:
                     copy.borrower = user
                     time = datetime.datetime.utcnow()
                     copy.borrow_time = time.replace(microsecond=0)
-                    copy.return_time = copy.borrow_time + user.type.borrow_length
+                    copy.return_time = copy.borrow_time + user.usertype.borrow_length
                     db.session.commit()
                     flash(session['username'] + " borrowed " + book.title)
                     return redirect(redirect_url())
@@ -293,7 +293,7 @@ def returnbook(id):
         # calculate fines
         delta = datetime.datetime.utcnow() - copy.return_time
         if delta > datetime.timedelta(0):
-            fine = (delta.days + 1) * copy.borrower.type.fine
+            fine = (delta.days + 1) * copy.borrower.usertype.fine
             user = models.User.query.filter_by(id=session['userid']).first()
             user.total_fines += fine
             flash("Fine of " + str(fine / 100))
@@ -366,20 +366,18 @@ def adduser():
         if db.session.query(db.exists().where(models.User.name == name)).scalar():
             flash("A user with name " + name + " already exists. Please choose a different name")
         else:
-            datatype = form.type.data
-            form.name.data = ''
-            form.type.data = ''
+            usertype = form.usertype.data
             role_student = models.UserType.query.filter_by(name='student').first()
             role_teacher = models.UserType.query.filter_by(name='teacher').first()
-            if datatype == 'student':
+            if usertype == 'student':
                 newdata = models.User(name=name, total_fines=0)
-                newdata.type = role_student
-            elif datatype == 'teacher':
+                newdata.usertype = role_student
+            elif usertype == 'teacher':
                 newdata = models.User(name=name, total_fines=0)
-                newdata.type = role_teacher
+                newdata.usertype = role_teacher
             db.session.add(newdata)
             db.session.commit()
-            flash("Added new " + datatype + " with name "
+            flash("Added new " + usertype + " with name "
                   + newdata.name + " with ID " + str(newdata.id))
         return redirect(redirect_url())
     return render_template('basicform.html', form=form, login=login)

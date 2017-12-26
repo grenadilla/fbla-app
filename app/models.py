@@ -9,7 +9,7 @@ class UserType(db.Model):
     borrow_length = db.Column(db.Interval())
     fine = db.Column(db.Integer())
     book_limit = db.Column(db.Integer())
-    users = db.relationship('User', backref='type')
+    users = db.relationship('User', backref='usertype')
 
     def dec_fine(self):
         return self.fine / 100

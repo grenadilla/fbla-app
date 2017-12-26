@@ -5,7 +5,7 @@ from app import db, models
 
 
 class NewUser(FlaskForm):
-    type = SelectField("Student or Teacher?", choices=[('student', 'Student'), ('teacher', 'Teacher')], validators=[Required()])
+    usertype = SelectField("Student or Teacher?", choices=[('student', 'Student'), ('teacher', 'Teacher')], validators=[Required()])
     name = StringField("Name of user", validators=[Required()])
     submit = SubmitField('Submit')
 
@@ -32,7 +32,7 @@ class DeleteData(FlaskForm):
 
 class EditUser(FlaskForm):
     name = StringField("New name", default="", validators=[Required()])
-    type = SelectField("Student or Teacher?", choices=[('student', 'Student'), ('teacher', 'Teacher')], validators=[Required()])
+    usertype = SelectField("Student or Teacher?", choices=[('student', 'Student'), ('teacher', 'Teacher')], validators=[Required()])
     submit = SubmitField('Submit')
 
 
