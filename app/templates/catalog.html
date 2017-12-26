@@ -3,24 +3,31 @@
 {% block page_content %}
 
 <div class="container">
-<h1>Book Data</h1>
-<table class="table table-bordered table-hover">
-    <thead>
-        <th>ID</th>
-        <th>Title</th>
-        <th>Author</th>
-        <th>Available Copies</th>
-    </thead>
-    <tbody>
-    {% for book in books %}
-        <tr>
-            <td class="clickable-link" data-href={{ url_for('book', id=book.id) }}>{{ book.id }}</td>
-            <td class="clickable-link" data-href={{ url_for('book', id=book.id) }}>{{ book.title }}</td>
-            <td class="clickable-link" data-href={{ url_for('author', id=book.author_id) }} >{{ book.author.name }}</td>
-            <td>{{ book.available() ~ '/' ~ book.copies|length  }}</td>
-        </tr>
+    <form method="POST">
+    {{ form.hidden_tag() }}
+    {% for field in form if field.widget.input_type != 'hidden' %}
+        {{ wtf.form_field(field, autocomplete="off") }}
     {% endfor %}
-    </tbody>
-</table>
+    </form>
+
+    <h1>Book Data</h1>
+    <table class="table table-bordered table-hover">
+        <thead>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Available Copies</th>
+        </thead>
+        <tbody>
+        {% for book in books %}
+            <tr>
+                <td class="clickable-link" data-href={{ url_for('book', id=book.id) }}>{{ book.id }}</td>
+                <td class="clickable-link" data-href={{ url_for('book', id=book.id) }}>{{ book.title }}</td>
+                <td class="clickable-link" data-href={{ url_for('author', id=book.author_id) }} >{{ book.author.name }}</td>
+                <td>{{ book.available() ~ '/' ~ book.copies|length  }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}

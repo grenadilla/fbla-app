@@ -50,3 +50,9 @@ class EditUserType(FlaskForm):
     teacher_fine = IntegerField("Teacher fine (cents)", validators=[Required()])
     teacher_book_limit = IntegerField("Teacher book limit", validators=[Required()])
     submit = SubmitField('Submit')
+
+class Search(FlaskForm):
+    search_type = SelectField("Search in", choices=[('all', 'All'), ('author', 'Authors'), ('book', 'Books')], validators=[Required()])
+    keyword = StringField("Search for", validators=[Required()])
+    submit = SubmitField('Search')
+

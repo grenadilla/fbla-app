@@ -346,9 +346,57 @@ def catalog():
     if login.validate_on_submit():
         signin(login.login_data.data)
         return redirect(redirect_url())
+
+    form = forms.Search()
+    if form.validate_on_submit():
+        return redirect(url_for('search', 
+                                search_type=form.search_type.data, 
+                                keyword=form.keyword.data))
+
     return render_template('catalog.html',
                            books=models.Book.query.all(),
+                           form=form,
                            login=login)
+
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    login = forms.Login()
+    if login.validate_on_submit():
+        signin(login.login_data.data)
+        return redirect(redirect_url())
+
+    keyword = request.args.get('keyword')
+    search_type = request.args.get('search_type')
+    books = []
+    authors = []
+
+    form = forms.Search(search_type=search_type,
+                        keyword=keyword)
+    if form.validate_on_submit():
+        return redirect(url_for('search', 
+                                search_type=form.search_type.data, 
+                                keyword=form.keyword.data))
+    
+    if keyword.isdigit():
+        id = int(keyword)
+    else:
+        #No id
+        id = 0
+    
+    if search_type == 'all' or search_type == 'book':
+        books.extend(models.Book.query.filter_by(id=id).all())
+        #Adds adds more results without duplicates
+        books = list(set(books + models.Book.query.filter(func.lower(models.Book.title) == func.lower(keyword)).all()))
+
+    if search_type == 'all' or search_type == 'author':
+        authors.extend(models.Author.query.filter_by(id=id).all())
+        authors = list(set(authors + models.Author.query.filter(func.lower(models.Author.name) == func.lower(keyword)).all()))
+
+    return render_template('search.html', 
+                           form=form, 
+                           login=login, 
+                           books=books, 
+                           authors=authors)
 
 
 @app.route('/add/user', methods=['GET', 'POST'])
