@@ -116,7 +116,7 @@ def editauthor(id):
         return redirect(redirect_url())
 
     author = models.Author.query.filter_by(id=id).first()
-    form = forms.EditUser(name=author.name)
+    form = forms.EditAuthor(name=author.name)
     form_title = "Edit author " + author.name
     if form.validate_on_submit():
         flash("Changed author " + author.name + " to " + form.name.data)

@@ -35,6 +35,10 @@ class EditUser(FlaskForm):
     usertype = SelectField("Student or Teacher?", choices=[('student', 'Student'), ('teacher', 'Teacher')], validators=[Required()])
     submit = SubmitField('Submit')
 
+class EditAuthor(FlaskForm):
+    name = StringField("New name", default="", validators=[Required()])
+    submit = SubmitField('Submit')
+
 
 class EditBook(FlaskForm):
     title = StringField("New name", default="", validators=[Required()])
