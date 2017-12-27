@@ -1,4 +1,4 @@
-#!flask/bin/python3
+#!/home/jeffrey/fbla-app/venv/bin/python3
 from threading import Thread, Lock
 from time import sleep
 import webview
