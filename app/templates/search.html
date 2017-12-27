@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
 {% block page_content %}
 <div class="container">
     <form method="POST">
@@ -8,8 +9,12 @@
         {{ wtf.form_field(field, autocomplete="off") }}
     {% endfor %}
     </form>
+    {% if search_type == 'book' or search_type == 'author' %}
+    <nav>
+         {{ macros.pagination_widget(pagination, 'search') }}
+    </nav>
 
-    {% if books|length > 0 %}
+    {% if search_type == 'book' %}
         <h3>Book Results</h3>
         <table class="table table-hover">
             <thead>
@@ -19,7 +24,7 @@
                 <th>Available Copies</th>
             </thead>
             <tbody>
-            {% for book in books %}
+            {% for book in results %}
                 <tr>
                     <td class="clickable-link" data-href={{ url_for('book', id=book.id) }}>{{ book.id }}</td>
                     <td class="clickable-link" data-href={{ url_for('book', id=book.id) }}>{{ book.title }}</td>
@@ -29,8 +34,7 @@
             {% endfor %}
             </tbody>
         </table>
-    {% endif %}
-    {% if authors|length > 0 %}
+    {% elif search_type == 'author' %}
         <h3>Author Results</h3>
         <table class="table table-hover">
             <thead>
@@ -38,7 +42,7 @@
                 <th>Name</th>
             </thead>
             <tbody>
-            {% for author in authors %}
+            {% for author in results %}
                 <tr class="clickable-link" data-href={{ url_for('author', id=author.id) }}>
                     <td>{{ author.id }}</td>     
                     <td>{{ author.name }}</td>
@@ -47,7 +51,10 @@
             </tbody>
         </table>
     {% endif %}
-    {% if books|length == 0 and authors|length == 0 %}
+    <nav>
+         {{ macros.pagination_widget(pagination, 'search') }}
+    </nav>
+    {% else %}
         <h3>No Results Found</h3>
     {% endif %}
 </div>

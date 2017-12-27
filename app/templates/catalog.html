@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
 {% block page_content %}
 
 <div class="container">
@@ -9,7 +10,9 @@
         {{ wtf.form_field(field, autocomplete="off") }}
     {% endfor %}
     </form>
-
+    <nav>
+         {{ macros.pagination_widget(pagination, 'catalog') }}
+    </nav>
     <h1>Book Data</h1>
     <table class="table table-bordered table-hover">
         <thead>
@@ -29,5 +32,8 @@
         {% endfor %}
         </tbody>
     </table>
+    <nav>
+         {{ macros.pagination_widget(pagination, 'catalog') }}
+    </nav>
 </div>
 {% endblock %}

@@ -3,6 +3,11 @@
 
 from app import db, models
 from decimal import Decimal
+from sqlalchemy.exc import IntegrityError
+import random
+import forgery_py
+
+random.seed()
 
 def addData():
     ut = models.UserType.query.filter_by(name='student').first()
@@ -14,6 +19,26 @@ def addData():
     db.session.add(a)
     db.session.add(b)
     db.session.add(c)
+
+def add_author(num=1):
+    for i in range(num):
+        author = models.Author(name=forgery_py.name.full_name())
+        db.session.add(author)
+    try:
+        db.session.commit()
+    except IntegrityError:
+        db.session.rollback()
+
+def add_book(num=1):
+    authors = models.Author.query.all()
+    for i in range(num):
+        book = models.Book(title=forgery_py.lorem_ipsum.title(), author=authors[random.randint(0,len(authors)-1)])
+        for c in range(random.randint(1,5)):
+            copy = models.Copy(book=book)
+            db.session.add(copy)
+        db.session.add(book)
+    db.session.commit()
+
 
 def deleteData():
     users = models.User.query.all()

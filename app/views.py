@@ -1,4 +1,4 @@
-from flask import render_template, session, redirect, url_for, flash, request
+from flask import render_template, session, redirect, url_for, flash, request, current_app
 from sqlalchemy import func
 import datetime
 from app import app, db, models, forms
@@ -352,9 +352,15 @@ def catalog():
         return redirect(url_for('search', 
                                 search_type=form.search_type.data, 
                                 keyword=form.keyword.data))
-
+    
+    page = request.args.get('page', 1, type=int)
+    pagination = models.Book.query.order_by(models.Book.id.asc()).paginate(
+                 page, per_page=current_app.config['CATALOG_POSTS_PER_PAGE'],
+                 error_out=False)
+    books = pagination.items
     return render_template('catalog.html',
-                           books=models.Book.query.all(),
+                           books=books,
+                           pagination=pagination,
                            form=form,
                            login=login)
 
@@ -367,8 +373,6 @@ def search():
 
     keyword = request.args.get('keyword').strip()
     search_type = request.args.get('search_type')
-    books = []
-    authors = []
 
     form = forms.Search(search_type=search_type,
                         keyword=keyword)
@@ -383,29 +387,36 @@ def search():
         #No id
         id = 0
     
-    if search_type == 'all' or search_type == 'book':
-        books.extend(models.Book.query.filter_by(id=id).all())
+    if search_type == 'book':
+        query = models.Book.query.filter_by(id=id)
         #Adds adds more results without duplicates
-        books = list(set(books + models.Book.query.filter(func.lower(models.Book.title) == func.lower(keyword)).all()))
-        books = list(set(books + models.Book.query.filter(models.Book.title.ilike(keyword+' %')).all()))
-        books = list(set(books + models.Book.query.filter(models.Book.title.ilike('% '+keyword)).all()))
-        books = list(set(books + models.Book.query.filter(models.Book.title.ilike('% '+keyword+' %')).all()))
+        query = query.union(models.Book.query.filter(func.lower(models.Book.title) == func.lower(keyword)))
+        query = query.union(models.Book.query.filter(models.Book.title.ilike(keyword+' %')))
+        query = query.union(models.Book.query.filter(models.Book.title.ilike('% '+keyword)))
+        query = query.union(models.Book.query.filter(models.Book.title.ilike('% '+keyword+' %')))
 
-    if search_type == 'all' or search_type == 'author':
-        authors.extend(models.Author.query.filter_by(id=id).all())
-        authors = list(set(authors + models.Author.query.filter(func.lower(models.Author.name) == func.lower(keyword)).all()))
+    if search_type == 'author':
+        query = models.Author.query.filter_by(id=id)
+        query = query.union(models.Author.query.filter(func.lower(models.Author.name) == func.lower(keyword)))
         # Check last names. First check if keyword is only one word,
         # Meaning specific search for last name only.
         # Otherwise check if only last name in general
         if len(keyword.split()) == 1:
-            authors = list(set(authors + models.Author.query.filter(models.Author.name.ilike('% '+keyword)).all()))
-        authors = list(set(authors + models.Author.query.filter(models.Author.name.ilike('% '+keyword.split()[-1])).all()))
+            query = query.union(models.Author.query.filter(models.Author.name.ilike('% '+keyword)))
+        query = query.union(models.Author.query.filter(models.Author.name.ilike('% '+keyword.split()[-1])))
+    
+    page = request.args.get('page', 1, type=int)
+    pagination = query.paginate(
+                 page, per_page=current_app.config['CATALOG_POSTS_PER_PAGE'],
+                 error_out=False)
+    results = pagination.items
 
     return render_template('search.html', 
                            form=form, 
-                           login=login, 
-                           books=books, 
-                           authors=authors)
+                           login=login,
+                           pagination=pagination,
+                           results=results, 
+                           search_type=search_type)
 
 
 @app.route('/add/user', methods=['GET', 'POST'])

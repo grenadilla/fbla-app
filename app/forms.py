@@ -52,7 +52,7 @@ class EditUserType(FlaskForm):
     submit = SubmitField('Submit')
 
 class Search(FlaskForm):
-    search_type = SelectField("Search in", choices=[('all', 'All'), ('author', 'Authors'), ('book', 'Books')], validators=[Required()])
+    search_type = SelectField("Search in", choices=[('book', 'Books'), ('author', 'Authors')], validators=[Required()])
     keyword = StringField("Search for", validators=[Required()])
     submit = SubmitField('Search')
 
