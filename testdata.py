@@ -6,7 +6,9 @@ from decimal import Decimal
 from sqlalchemy.exc import IntegrityError
 import random
 import forgery_py
+import string
 
+table = str.maketrans({key: None for key in string.punctuation})
 random.seed()
 
 def addData():
@@ -32,7 +34,7 @@ def add_author(num=1):
 def add_book(num=1):
     authors = models.Author.query.all()
     for i in range(num):
-        book = models.Book(title=forgery_py.lorem_ipsum.title(), author=authors[random.randint(0,len(authors)-1)])
+        book = models.Book(title=forgery_py.lorem_ipsum.title().translate(table), author=authors[random.randint(0,len(authors)-1)])
         for c in range(random.randint(1,5)):
             copy = models.Copy(book=book)
             db.session.add(copy)
