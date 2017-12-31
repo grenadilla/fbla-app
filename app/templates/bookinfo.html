@@ -101,7 +101,9 @@
             {% endif %}
         {% endfor %}
     </table>
-    {% if borrowed_id == 0 %}
+    {% if borrowed_id == -1 %}
+        <p>All copies of this book have been checked out</p>
+    {% elif borrowed_id == 0 %}
         <a class="btn btn-default" href={{ url_for('borrow', _external=True, id=book.id )}}>Borrow Book</a>
     {% else %}
         <a class="btn btn-default" href={{ url_for('returnbook', _external=True, id=borrowed_id )}}>Return Book</a>

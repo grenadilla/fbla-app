@@ -67,10 +67,13 @@ def book(id):
 
     book = models.Book.query.filter_by(id=id).first()
 
-    # Checks if user has borrowed a book, passes id of borrowed
-    # copy (0 if not borrowed)
-    borrowed_id = 0
+    # Checks if user has borrowed a book, passes id of borrowed copy
+    # -1 : No copies available to borrow
+    #  0 : Copy available to borrow
+    borrowed_id = -1
     for copy in book.copies:
+        if borrowed_id == -1 and copy.borrower is None:
+            borrowed_id = 0
         if 'userid' in session and session['userid'] == copy.borrower_id:
             borrowed_id = copy.id
     return render_template('bookinfo.html',
