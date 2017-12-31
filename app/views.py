@@ -372,6 +372,25 @@ def catalog():
                            form=form,
                            login=login)
 
+@app.route('/users', methods=['GET', 'POST'])
+def users():
+    #List of all users
+    login = forms.Login()
+    if login.validate_on_submit():
+        signin(login.login_data.data)
+        return redirect(redirect_url())
+
+    page = request.args.get('page', 1, type=int)
+    pagination = models.User.query.order_by(models.User.id.asc()).paginate(
+                 page, per_page=current_app.config['USERS_POSTS_PER_PAGE'],
+                 error_out=False)
+    users = pagination.items
+    return render_template('users.html',
+                           users=users,
+                           pagination=pagination,
+                           login=login)
+
+
 @app.route('/search', methods=['GET', 'POST'])
 def search():
     login = forms.Login()
@@ -409,13 +428,15 @@ def search():
         # Check last names. First check if keyword is only one word,
         # Meaning specific search for last name only.
         # Otherwise check if only last name in general
+        # Finally, check for first name
         if len(keyword.split()) == 1:
             query = query.union(models.Author.query.filter(models.Author.name.ilike('% '+keyword)))
         query = query.union(models.Author.query.filter(models.Author.name.ilike('% '+keyword.split()[-1])))
+        query = query.union(models.Author.query.filter(models.Author.name.ilike(keyword.split()[0]+' %')))
     
     page = request.args.get('page', 1, type=int)
     pagination = query.paginate(
-                 page, per_page=current_app.config['CATALOG_POSTS_PER_PAGE'],
+                 page, per_page=current_app.config['SEARCH_POSTS_PER_PAGE'],
                  error_out=False)
     results = pagination.items
 

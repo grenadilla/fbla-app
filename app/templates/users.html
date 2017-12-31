@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
+{% block page_content %}
+
+<div class="container">
+    <h1>User Data</h1>
+    <table class="table table-bordered table-hover">
+        <thead>
+            <th>ID</th>
+            <th>Type</th>
+            <th>Name</th>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            <tr>
+                <td class="clickable-link" data-href={{ url_for('user', id=user.id) }}>{{ user.id }}</td>
+                <td class="clickable-link" data-href={{ url_for('user', id=user.id) }}>{{ user.usertype.name|title }}</td>
+                <td class="clickable-link" data-href={{ url_for('user', id=user.id) }} >{{ user.name }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <nav>
+        {{ macros.pagination_widget(pagination, 'users') }}
+    </nav>
+</div>
+{% endblock %}

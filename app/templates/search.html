@@ -11,10 +11,6 @@
     </form>
 
     {% if results|length > 0 %}
-    <nav>
-         {{ macros.pagination_widget(pagination, 'search', keyword=keyword, search_type=search_type) }}
-    </nav>
-
     {% if search_type == 'book' %}
         <h3>Book Results</h3>
         <p>Showing results {{ (pagination.page-1)*pagination.per_page+1 }} -
