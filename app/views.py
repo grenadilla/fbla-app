@@ -138,7 +138,7 @@ def editbook(id):
         return redirect(redirect_url())
 
     book = models.Book.query.filter_by(id=id).first()
-    form = forms.EditBook(title=book.title, author=str(book.author_id))
+    form = forms.EditBook(title=book.title, author=str(book.author_id), add_copy=0)
     choices = []
     authors = models.Author.query.all()
     for author in authors:
@@ -499,13 +499,15 @@ def addbook():
         title = form.title.data
         authorid = form.author.data
         copies = form.copies.data
-        form.title.data = ''
-        form.author.data = ''
-        form.copies.data = 0
+        author = models.Author.query.filter_by(id=authorid).first()
+        book_check = models.Book.query.filter(func.lower(models.Book.title)==func.lower(title)).filter_by(author=author).first()
+        if book_check is not None:
+                flash("A book of title " + book_check.title + " and author " + author.name + 
+                      " already exists. Perhaps you wanted to add another copy of this book?")
+                return redirect(redirect_url())
         if copies <= 0:
             flash("Must create at least one copy")
             return redirect(redirect_url())
-        author = models.Author.query.filter_by(id=authorid).first()
         book = models.Book(title=title, author=author)
         db.session.add(book)
         for i in range(0, copies):
