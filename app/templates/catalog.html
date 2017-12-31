@@ -10,7 +10,8 @@
         {{ wtf.form_field(field, autocomplete="off") }}
     {% endfor %}
     </form>
-    <h1>Book Data</h1>
+    <h1>All Books</h1>
+    {{ macros.result_counter(pagination) }}
     <table class="table table-bordered table-hover">
         <thead>
             <th>ID</th>
