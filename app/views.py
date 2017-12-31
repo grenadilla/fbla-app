@@ -590,8 +590,17 @@ def borrowedbooks():
         signin(login.login_data.data)
         return redirect(redirect_url())
 
-    copies = models.Copy.query.filter(models.Copy.borrower != None).all()
-    return render_template('borrowedbooks.html', copies=copies, login=login)
+    page = request.args.get('page', 1, type=int)
+    pagination = models.Copy.query.filter(models.Copy.borrower != None).order_by(
+                 models.Copy.id.asc()).paginate(
+                 page, per_page=current_app.config['POSTS_PER_PAGE'],
+                 error_out=False)
+
+    copies = pagination.items
+    return render_template('borrowedbooks.html',
+                           copies=copies, 
+                           pagination=pagination,
+                           login=login)
 
 
 def signin(data):
