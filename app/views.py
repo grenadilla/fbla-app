@@ -421,6 +421,7 @@ def search():
                            login=login,
                            pagination=pagination,
                            results=results, 
+                           keyword=keyword,
                            search_type=search_type)
 
 
