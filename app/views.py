@@ -611,6 +611,26 @@ def borrowedbooks():
                            pagination=pagination,
                            login=login)
 
+@app.route('/borrowedbooks/overdue', methods=['GET', 'POST'])
+def overduebooks():
+    login = forms.Login()
+    if login.validate_on_submit():
+        signin(login.login_data.data)
+        return redirect(redirect_url())
+
+    page = request.args.get('page', 1, type=int)
+    query = models.Copy.query.filter(models.Copy.borrower != None)
+    query = query.filter(models.Copy.return_time < datetime.datetime.utcnow())
+    pagination = query.order_by(models.Copy.id.asc()).paginate(
+                 page, per_page=current_app.config['POSTS_PER_PAGE'],
+                 error_out=False)
+
+    copies = pagination.items
+    return render_template('overduebooks.html',
+                           copies=copies, 
+                           pagination=pagination,
+                           login=login)
+
 
 def signin(data):
     # given login data checks database and signs in

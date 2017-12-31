@@ -84,9 +84,9 @@ class Copy(db.Model):
         return datetime.datetime.utcnow() > self.return_time
 
     def time_left(self):
-        #Creates timedelta
+        #Creates timedelta. Note that the function converts the result to positive
         time_left = self.return_time - datetime.datetime.utcnow()
-        return (str(time_left.days) + " days, " + str(int(time_left.seconds/3600)) 
+        return (str(abs(time_left.days)) + " days, " + str(int(time_left.seconds/3600)) 
                + " hours")
 
     def __repr__(self):
