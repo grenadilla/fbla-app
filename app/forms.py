@@ -43,6 +43,7 @@ class EditAuthor(FlaskForm):
 class EditBook(FlaskForm):
     title = StringField("New name", default="", validators=[Required()])
     author = SelectField("New author", choices=[], validators=[Required()])
+    add_copy = IntegerField("Number of copies to add", default=0, validators=[Required()])
     submit = SubmitField('Submit')
 
 

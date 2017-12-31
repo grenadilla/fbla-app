@@ -148,6 +148,11 @@ def editbook(id):
     if form.validate_on_submit():
         flash("Changed book " + book.title)
         book.title = form.title.data
+        add_copy = form.add_copy.data
+        for i in range(add_copy):
+            new_copy = models.Copy(book=book)
+        if add_copy > 0:
+            flash("Added " + str(add_copy) + " new copies of " + book.title)
         book.author = models.Author.query.filter_by(id=int(form.author.data)).first()
         db.session.commit()
         return redirect(url_for("book", id=book.id))
