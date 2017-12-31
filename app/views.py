@@ -579,8 +579,17 @@ def fines():
         signin(login.login_data.data)
         return redirect(redirect_url())
 
-    users = models.User.query.filter(models.User.total_fines > 0)
-    return render_template('fines.html', users=users, login=login)
+    page = request.args.get('page', 1, type=int)
+    pagination = models.User.query.filter(models.User.total_fines > 0).order_by(
+                 models.User.id.asc()).paginate(
+                 page, per_page=current_app.config['POSTS_PER_PAGE'],
+                 error_out=False)
+
+    users = pagination.items
+    return render_template('fines.html',
+                           users=users, 
+                           pagination=pagination,
+                           login=login)
 
 
 @app.route('/borrowedbooks', methods=['GET', 'POST'])

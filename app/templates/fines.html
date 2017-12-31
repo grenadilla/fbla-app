@@ -1,20 +1,24 @@
 {% extends "base.html" %}
-
+{% import "_macros.html" as macros %}
 {% block page_content %}
 <div class="container">
-<table class="table table-bordered table-hover">
-    <thead>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Fines Due</th>
-    </thead>
-    {% for user in users %}
-    <tr class="clickable-link" data-href={{ url_for('user', id=user.id) }}>
-        <td>{{ user.id }}</td>
-        <td>{{ user.name }}</td>
-        <td>{{ '$' ~ '%0.2f'| format(user.dec_total_fines()|float) }}</td>
-    </tr>
-    {% endfor %}
-</table>
+    {{ macros.result_counter(pagination) }}
+    <table class="table table-bordered table-hover">
+        <thead>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Fines Due</th>
+        </thead>
+        {% for user in users %}
+        <tr class="clickable-link" data-href={{ url_for('user', id=user.id) }}>
+            <td>{{ user.id }}</td>
+            <td>{{ user.name }}</td>
+            <td>{{ '$' ~ '%0.2f'| format(user.dec_total_fines()|float) }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <nav>
+        {{ macros.pagination_widget(pagination, 'fines') }}
+    </nav>
 </div>
 {% endblock %}
