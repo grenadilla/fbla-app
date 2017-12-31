@@ -2,6 +2,21 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% block page_content %}
 <div class="container">
-
+    <h4>VLib 1.0</h4>
+    <h2>Lorem Ipsum High School Library</h2>
+    <p>
+    There {% if student.users|length > 1 %}are{% else %}is{% endif %} currently {{ student.users|length }} student{% if student.users|length > 1 %}s{% endif %} 
+    and {{ teacher.users|length }} teacher{% if teacher.users|length > 1 %}s{% endif %} in the library system 
+    </p>
+    <P>
+        This library has {{ books|length }} individual titles and {{ copies|length }} books in total
+    </p>
+    {% if checked_out_num == 1 %}
+        <p>1 book has been checked out</p>
+    {% elif checked_out_num == 0 %}
+        <p>No books have been checked out yet</p>
+    {% else %}
+        <p>{{ checked_out_num }} books have been checked out by {{ borrowing_users }} user{% if borrowing_users >= 1 %}s{% endif %}</p>
+    {% endif %}
 </div>
 {% endblock %}

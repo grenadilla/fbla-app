@@ -28,7 +28,29 @@ def index():
     if login.validate_on_submit():
         signin(login.login_data.data)
         return redirect(url_for('index'))
-    return render_template('index.html', login=login)
+    student = models.UserType.query.filter_by(name='student').first()
+    teacher = models.UserType.query.filter_by(name='teacher').first()
+    users = models.User.query.all()
+    books = models.Book.query.all()
+    copies = models.Copy.query.all()
+    checked_out_num = 0
+    borrowing_users = 0
+    # Find number of checked out books
+    for copy in copies:
+        if copy.borrower is not None:
+            checked_out_num += 1
+    for user in users:
+        if len(user.books) > 0:
+            borrowing_users += 1
+    return render_template('index.html', 
+                           login=login,
+                           student=student,
+                           teacher=teacher,
+                           users=users,
+                           books=books,
+                           copies=copies,
+                           checked_out_num=checked_out_num,
+                           borrowing_users=borrowing_users)
 
 
 @app.route('/user/<id>', methods=['GET', 'POST'])
