@@ -385,7 +385,7 @@ def catalog():
     
     page = request.args.get('page', 1, type=int)
     pagination = models.Book.query.order_by(models.Book.id.asc()).paginate(
-                 page, per_page=current_app.config['CATALOG_POSTS_PER_PAGE'],
+                 page, per_page=current_app.config['POSTS_PER_PAGE'],
                  error_out=False)
     books = pagination.items
     return render_template('catalog.html',
@@ -404,7 +404,7 @@ def users():
 
     page = request.args.get('page', 1, type=int)
     pagination = models.User.query.order_by(models.User.id.asc()).paginate(
-                 page, per_page=current_app.config['USERS_POSTS_PER_PAGE'],
+                 page, per_page=current_app.config['POSTS_PER_PAGE'],
                  error_out=False)
     users = pagination.items
     return render_template('users.html',
@@ -458,7 +458,7 @@ def search():
     
     page = request.args.get('page', 1, type=int)
     pagination = query.paginate(
-                 page, per_page=current_app.config['SEARCH_POSTS_PER_PAGE'],
+                 page, per_page=current_app.config['POSTS_PER_PAGE'],
                  error_out=False)
     results = pagination.items
 
