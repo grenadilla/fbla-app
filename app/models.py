@@ -29,6 +29,13 @@ class User(db.Model):
     def dec_total_fines(self):
         return self.total_fines / 100
 
+    def overdue_num(self):
+        num = 0
+        for copy in self.books:
+            if datetime.datetime.utcnow() > copy.return_time:
+                num += 1
+        return num
+
     def __repr__(self):
         return '<User %r>' % (self.name)
 
