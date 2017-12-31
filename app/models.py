@@ -24,7 +24,7 @@ class User(db.Model):
     name = db.Column(db.String(64), index=True, unique=True)
     total_fines = db.Column(db.Integer())
     books = db.relationship('Copy', backref='borrower')
-    type_id = db.Column(db.Integer, db.ForeignKey('usertypes.id'))
+    type_name = db.Column(db.String, db.ForeignKey('usertypes.name'))
 
     def dec_total_fines(self):
         return self.total_fines / 100

@@ -394,22 +394,45 @@ def catalog():
                            form=form,
                            login=login)
 
-@app.route('/users', methods=['GET', 'POST'])
-def users():
-    #List of all users
+@app.route('/users/students', methods=['GET', 'POST'])
+def students():
+    #List of all students
     login = forms.Login()
     if login.validate_on_submit():
         signin(login.login_data.data)
         return redirect(redirect_url())
 
     page = request.args.get('page', 1, type=int)
-    pagination = models.User.query.order_by(models.User.id.asc()).paginate(
-                 page, per_page=current_app.config['POSTS_PER_PAGE'],
+    pagination = models.User.query.filter(models.User.type_name == 'student').order_by(
+                 models.User.id.asc()).paginate(page, per_page=current_app.config['POSTS_PER_PAGE'],
                  error_out=False)
     users = pagination.items
     return render_template('users.html',
                            users=users,
                            pagination=pagination,
+                           usertype='student',
+                           address='students',
+                           login=login)
+
+
+@app.route('/users/teachers', methods=['GET', 'POST'])
+def teachers():
+    #List of all teachers
+    login = forms.Login()
+    if login.validate_on_submit():
+        signin(login.login_data.data)
+        return redirect(redirect_url())
+
+    page = request.args.get('page', 1, type=int)
+    pagination = models.User.query.filter(models.User.type_name == 'teacher').order_by(
+                 models.User.id.asc()).paginate(page, per_page=current_app.config['POSTS_PER_PAGE'],
+                 error_out=False)
+    users = pagination.items
+    return render_template('users.html',
+                           users=users,
+                           pagination=pagination,
+                           usertype='teacher',
+                           address='teachers',
                            login=login)
 
 
