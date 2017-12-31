@@ -3,6 +3,7 @@
 {% block page_content %}
 
 <div class="container">
+{% if copies|length > 0 %}
     <h1>Borrowed Books</h1>
     {{ macros.result_counter(pagination) }}
     <table class="table table-bordered table-hover">
@@ -34,5 +35,8 @@
     <nav>
         {{ macros.pagination_widget(pagination, 'borrowedbooks') }}
     </nav>
+{% else %}
+    <h2>There are currently no borrowed books</h2>
+{% endif %}
 </div>
 {% endblock %}

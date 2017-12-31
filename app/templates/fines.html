@@ -2,6 +2,7 @@
 {% import "_macros.html" as macros %}
 {% block page_content %}
 <div class="container">
+{% if users|length > 0 %}
     {{ macros.result_counter(pagination) }}
     <table class="table table-bordered table-hover">
         <thead>
@@ -20,5 +21,8 @@
     <nav>
         {{ macros.pagination_widget(pagination, 'fines') }}
     </nav>
+{% else %}
+    <h2>There are currently no users with unpaid fines</h2>
+{% endif %}
 </div>
 {% endblock %}

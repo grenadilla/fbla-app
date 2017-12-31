@@ -3,6 +3,7 @@
 {% block page_content %}
 
 <div class="container">
+{% if copies|length > 0 %}
     <h1>Overdue Books</h1>
     {{ macros.result_counter(pagination) }}
     <table class="table table-bordered table-hover">
@@ -28,5 +29,8 @@
     <nav>
         {{ macros.pagination_widget(pagination, 'overduebooks') }}
     </nav>
+{% else %}
+    <h2>There are currently no overdue books</h2>
+{% endif %}
 </div>
 {% endblock %}
