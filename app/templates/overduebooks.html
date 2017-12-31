@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% import "_macros.html" as macros %}
+{% block page_content %}
+
+<div class="container">
+    <h1>Overdue Books</h1>
+    {{ macros.result_counter(pagination) }}
+    <table class="table table-bordered table-hover">
+        <thead>
+            <th>Book ID</th>
+            <th>Copy ID</th>
+            <th>Title</th>
+            <th>Borrower ID</th>
+            <th>Borrower</th>
+            <th>Days Overdue</th>
+        </thead>
+        {% for copy in copies %}
+        <tr>
+            <td class="clickable-link" data-href={{ url_for('book', id=copy.book_id) }}>{{ copy.book_id }}</td>
+            <td class="clickable-link" data-href={{ url_for('book', id=copy.book_id) }}>{{ copy.id }}</td>
+            <td class="clickable-link" data-href={{ url_for('book', id=copy.book_id) }}>{{ copy.book.title }}</td>
+            <td class="clickable-link" data-href={{ url_for('user', id=copy.borrower_id) }}>{{ copy.borrower_id }}</td>
+            <td class="clickable-link" data-href={{ url_for('user', id=copy.borrower_id) }}>{{ copy.borrower.name }}</td>
+            <td class="clickable-link" data-href={{ url_for('book', id=copy.book_id) }}>{{ copy.time_left() }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <nav>
+        {{ macros.pagination_widget(pagination, 'overduebooks') }}
+    </nav>
+</div>
+{% endblock %}
