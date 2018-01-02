@@ -559,8 +559,8 @@ def addbook():
     title = None
     form = forms.NewBook()
 
-    choices = []
-    authors = models.Author.query.all()
+    choices = [(None, "--Choose an author--")]
+    authors = models.Author.query.order_by(func.substr(models.Author.name, func.instr(models.Author.name, ' '))).all()
     for author in authors:
         choices.append((str(author.id), author.name))
     form.author.choices = choices
