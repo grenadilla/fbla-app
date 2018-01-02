@@ -5,4 +5,5 @@ $(document).ready(function($) {
     $(".cancel-button").click(function() {
         history.go(-1);
     });
+    $("#author").select2();
 });
