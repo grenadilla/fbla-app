@@ -317,24 +317,34 @@ def borrow(id):
 
 @app.route('/returnbook/<id>', methods=['GET'])
 def returnbook(id):
-    # URL to return the copy of a book. Id is copy ID, not book ID
-    copy = models.Copy.query.filter_by(id=id).first()
-    if 'userid' in session and copy.borrower_id == session['userid']:
-        # calculate fines
-        delta = datetime.datetime.utcnow() - copy.return_time
-        if delta > datetime.timedelta(0):
-            fine = (delta.days + 1) * copy.borrower.usertype.fine
-            user = models.User.query.filter_by(id=session['userid']).first()
-            user.total_fines += fine
-            flash("Fine of " + str(fine / 100))
-        # reset borrow variables
-        copy.borrower = None
-        copy.borrow_time = None
-        copy.return_time = None
-        db.session.commit()
-        flash("User " + session['username'] + " returned " + copy.book.title)
+    if 'userid' not in session or session['userid'] is None:
+        flash("Error: User not logged in; cannot return book")
+        return redirect(redirect_url())
+    if id == 'all':
+        # Use list comprehension to generate list of ids to return
+        ids = [copy.id for copy in models.User.query.filter_by(id=session['userid']).first().books]
     else:
-        flash('Error, wrong user id for returning book')
+        # if not returning all create a list of only one id
+        ids = [id]
+    for id in ids:
+        # URL to return the copy of a book. Id is copy ID, not book ID
+        copy = models.Copy.query.filter_by(id=id).first()
+        if copy.borrower_id == session['userid']:
+            # calculate fines
+            delta = datetime.datetime.utcnow() - copy.return_time
+            if delta > datetime.timedelta(0):
+                fine = (delta.days + 1) * copy.borrower.usertype.fine
+                user = models.User.query.filter_by(id=session['userid']).first()
+                user.total_fines += fine
+                flash("Fine of " + str(fine / 100))
+            # reset borrow variables
+            copy.borrower = None
+            copy.borrow_time = None
+            copy.return_time = None
+            flash("User " + session['username'] + " returned " + copy.book.title)
+        else:
+            flash('Error, wrong user id for returning ' + copy.book.title)
+    db.session.commit()
     return redirect(redirect_url())
 
 
