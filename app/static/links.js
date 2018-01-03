@@ -6,4 +6,7 @@ $(document).ready(function($) {
         history.go(-1);
     });
     $("#author").select2();
+    $('select').not('#author').select2({
+        minimumResultsForSearch: Infinity
+    });
 });
