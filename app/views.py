@@ -291,27 +291,26 @@ def borrow(id):
     # Page to borrow a book, accessed by redirect from book page
     # Does not display page, instead redirects to previous page
     # ID is book ID, not copy ID
-    book = models.Book.query.filter_by(id=id).first()
-    for copy in book.copies:
-        if copy.borrower is None:
-            # If user is logged in, user borrows first available copy of book
-            if 'userid' in session:
-                user = models.User.query.filter_by(id=session['userid']).first()
-                if len(user.books) >= user.usertype.book_limit:
-                    flash('You have reached your borrow limit. '
-                          'Please return another book to borrow this book')
-                else:
-                    copy.borrower = user
-                    time = datetime.datetime.utcnow()
-                    copy.borrow_time = time.replace(microsecond=0)
-                    copy.return_time = copy.borrow_time + user.usertype.borrow_length
-                    db.session.commit()
-                    flash(session['username'] + " borrowed " + book.title)
-                    return redirect(redirect_url())
-            else:
-                flash("Please login to borrow a book")
+    # If user is logged in, user borrows first available copy of book
+    if 'userid' in session and session['userid'] is not None:
+        user = models.User.query.filter_by(id=session['userid']).first()
+        if len(user.books) >= user.usertype.book_limit:
+            flash('You have reached your borrow limit. '
+                  'Please return another book to borrow this book')
+            return redirect(redirect_url())
+        book = models.Book.query.filter_by(id=id).first()
+        for copy in book.copies:
+            if copy.borrower is None:
+                copy.borrower = user
+                time = datetime.datetime.utcnow()
+                copy.borrow_time = time.replace(microsecond=0)
+                copy.return_time = copy.borrow_time + user.usertype.borrow_length
+                db.session.commit()
+                flash(session['username'] + " borrowed " + book.title)
                 return redirect(redirect_url())
-    flash("This book is not available")
+        flash("This book is not available")
+    else:
+        flash("Please login to borrow a book")
     return redirect(redirect_url())
 
 
