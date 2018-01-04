@@ -61,3 +61,6 @@ class Search(FlaskForm):
     keyword = StringField("Search for", validators=[Required()])
     submit = SubmitField('Search')
 
+class Borrow(FlaskForm):
+    bookid = IntegerField("ID of book copy", validators=[Required()])
+    submit = SubmitField('Borrow')

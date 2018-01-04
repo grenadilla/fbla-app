@@ -85,6 +85,7 @@
             <th>Borrowed By</th>
             <th>Borrow Date</th>
             <th>Return Date</th>
+            <th>Borrow</th>
         </thead>
         {% for copy in book.copies %}
             <tr>
@@ -121,22 +122,21 @@
                 <td>Available</td>
                 <td></td>
                 <td></td>
-            </tr>
             {% else %}
                 <td class="clickable-link" data-href={{ url_for('user', id=copy.borrower_id) }}>{{ copy.id }}</td>
                 <td class="clickable-link" data-href={{ url_for('user', id=copy.borrower_id) }}>{{ copy.borrower.name }}</td>
                 <td class="clickable-link" data-href={{ url_for('user', id=copy.borrower_id) }}>{{ copy.borrow_time }}</td>
                 <td class="clickable-link" data-href={{ url_for('user', id=copy.borrower_id) }}>{{ copy.return_time }}</td>
-            </tr>
             {% endif %}
+            {% if copy.id in borrowed_id %}
+                <td><a class="btn btn-primary" href={{ url_for('returnbook', id=copy.id) }}>Return Book</a></td>
+            {% elif copy.borrower is none %}
+                <td><a class="btn btn-default" href={{ url_for('borrow', id=copy.id) }}>Borrow Book</a></td>
+            {% else %}
+                <td></td>
+            {% endif %}
+            </tr>
         {% endfor %}
     </table>
-    {% if borrowed_id == -1 %}
-        <p>All copies of this book have been checked out</p>
-    {% elif borrowed_id == 0 %}
-        <a class="btn btn-default" href={{ url_for('borrow', _external=True, id=book.id )}}>Borrow Book</a>
-    {% else %}
-        <a class="btn btn-default" href={{ url_for('returnbook', _external=True, id=borrowed_id )}}>Return Book</a>
-    {% endif %}
 </div>
 {% endblock %}

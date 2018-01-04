@@ -60,9 +60,15 @@ def user(id):
     if login.validate_on_submit():
         signin(login.login_data.data)
         return redirect(redirect_url())
-
+    
+    form = forms.Borrow()
+    if form.validate_on_submit():
+        return redirect(url_for('borrow', id=form.bookid.data))
     user = models.User.query.filter_by(id=id).first()
-    return render_template('userinfo.html', user=user, login=login)
+    return render_template('userinfo.html', 
+                           user=user, 
+                           login=login,
+                           form=form)
 
 
 @app.route('/author/<id>', methods=['GET', 'POST'])
@@ -88,19 +94,16 @@ def book(id):
         return redirect(redirect_url())
 
     book = models.Book.query.filter_by(id=id).first()
-
-    # Checks if user has borrowed a book, passes id of borrowed copy
-    # -1 : No copies available to borrow
-    #  0 : Copy available to borrow
-    borrowed_id = -1
+    
+    # Checks if user has borrowed a book, passes list if IDs of borrowed copies
+    borrowed_id = []
     for copy in book.copies:
-        if borrowed_id == -1 and copy.borrower is None:
-            borrowed_id = 0
-        if 'userid' in session and session['userid'] == copy.borrower_id:
-            borrowed_id = copy.id
+        if 'userid' in session and session['userid'] is not None and session['userid'] == copy.borrower_id:
+            borrowed_id.append(copy.id)
     return render_template('bookinfo.html',
                            book=book,
                            login=login,
+                           user=user,
                            borrowed_id=borrowed_id)
 
 
@@ -290,7 +293,7 @@ def deletecopy(id):
 def borrow(id):
     # Page to borrow a book, accessed by redirect from book page
     # Does not display page, instead redirects to previous page
-    # ID is book ID, not copy ID
+    # ID is copy ID, not book ID
     # If user is logged in, user borrows first available copy of book
     if 'userid' in session and session['userid'] is not None:
         user = models.User.query.filter_by(id=session['userid']).first()
@@ -298,16 +301,18 @@ def borrow(id):
             flash('You have reached your borrow limit. '
                   'Please return another book to borrow this book')
             return redirect(redirect_url())
-        book = models.Book.query.filter_by(id=id).first()
-        for copy in book.copies:
-            if copy.borrower is None:
-                copy.borrower = user
-                time = datetime.datetime.utcnow()
-                copy.borrow_time = time.replace(microsecond=0)
-                copy.return_time = copy.borrow_time + user.usertype.borrow_length
-                db.session.commit()
-                flash(session['username'] + " borrowed " + book.title)
-                return redirect(redirect_url())
+        copy = models.Copy.query.filter_by(id=id).first()
+        if copy is None:
+            flash("No book copy was found with ID " + str(id))
+            return redirect(redirect_url())
+        if copy.borrower is None:
+            copy.borrower = user
+            time = datetime.datetime.utcnow()
+            copy.borrow_time = time.replace(microsecond=0)
+            copy.return_time = copy.borrow_time + user.usertype.borrow_length
+            db.session.commit()
+            flash(session['username'] + " borrowed " + copy.book.title)
+            return redirect(redirect_url())
         flash("This book is not available")
     else:
         flash("Please login to borrow a book")
