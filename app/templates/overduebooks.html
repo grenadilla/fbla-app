@@ -4,7 +4,32 @@
 
 <div class="container">
 {% if copies|length > 0 %}
-    <h1>Overdue Books</h1>
+    <h1 style="display: inline-block;">Overdue Books</h1>
+    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#help">
+          Help
+    </button>
+    <div class="modal fade" id="help" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="helpLabel">Overdue Page Help</h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        This information page displays a list of overdue books, and by how many days they
+                        are overdue. Click on any book data to be directed to the book's information page,
+                        and click on any user data to be directed to the borrower's information page.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
     {{ macros.result_counter(pagination) }}
     <table class="table table-bordered table-hover">
         <thead>

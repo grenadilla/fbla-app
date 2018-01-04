@@ -10,7 +10,38 @@
         {{ wtf.form_field(field, autocomplete="off") }}
     {% endfor %}
     </form>
-    <h1>All Books</h1>
+    <h1 style="display: inline-block;">All Books</h1>
+    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#help">
+          Help
+    </button>
+    <div class="modal fade" id="help" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="helpLabel">Catalog Page Help</h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        This is the catalog page, a list of all the books in the database. Clicking on the name
+                        of an author will take you to the information page for that author. CLicking on any other
+                        part of the data will take you to the information page for the book, where a user can borrow
+                        the book.
+                    </p>
+                    <p>
+                        You can search the catalog through the search bar. Choose between searching in the list of 
+                        books and authors. Searches can take ID numbers as inputs.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {{ macros.result_counter(pagination) }}
     <table class="table table-bordered table-hover">
         <thead>

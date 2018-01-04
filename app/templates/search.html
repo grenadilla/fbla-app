@@ -9,18 +9,38 @@
         {{ wtf.form_field(field, autocomplete="off") }}
     {% endfor %}
     </form>
-
+    <div class="modal fade" id="help" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="helpLabel">Search Page Help</h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        This is a search result page, which displays the results of a search query. You can click on
+                        an author's name to be directed to the data page for the author. Clicking on a book's information
+                        will direct you to the data page for the book, where the book can be checked out
+                    </p>
+                    <p>
+                        You can search the catalog through the search bar. Choose between searching in the list of 
+                        books and authors. Searches can take ID numbers as inputs.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
     {% if results|length > 0 %}
     {% if search_type == 'book' %}
-        <h3>Book Results</h3>
-        {#<p>Showing results {{ (pagination.page-1)*pagination.per_page+1 }} -
-        {% if pagination.has_next %}
-            {{ pagination.page*pagination.per_page }} 
-        {% else %}
-            {{ pagination.total }}
-        {% endif %}
-        of {{ pagination.total }}
-        </p> #}
+        <h3 style="display: inline-block">Book Results</h3>
+        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#help">
+            Help
+        </button>
         {{ macros.result_counter(pagination) }}
         <table class="table table-hover">
             <thead>
@@ -41,15 +61,11 @@
             </tbody>
         </table>
     {% elif search_type == 'author' %}
-        <h3>Author Results</h3>
-        <p>Showing results {{ (pagination.page-1)*pagination.per_page+1 }} -
-        {% if pagination.has_next %}
-            {{ pagination.page*pagination.per_page }} 
-        {% else %}
-            {{ pagination.total }}
-        {% endif %}
-        of {{ pagination.total }}
-        </p>
+        <h3 style="display: inline-block;">Author Results</h3>
+        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#help">
+            Help
+        </button>
+        {{ macros.result_counter(pagination) }}
         <table class="table table-hover">
             <thead>
                 <th>ID</th>

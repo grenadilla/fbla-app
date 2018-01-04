@@ -28,6 +28,36 @@
             </div>
         </div>
     </div>
+    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#help">
+          Help
+    </button>
+    <div class="modal fade" id="help" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="helpLabel">Book Page Help</h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        This is a book information page, which displays information on the book and its copies. Clicking on the name of the
+                        book's author will link you to the author's page. By clicking the 'edit' button you can change the title and author of
+                        the book and add further copies. By clicking on the red 'x' next to the ID number of each book copy, you can delete a copy
+                        of the book. Clicking on the table row for a copy will link you to the user page for the borrower of the copy if possible.
+                    </p>
+                    <p>
+                        If a user is logged in, they can borrow or return a book here
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <table class="table table-hover">
         <tr>
             <th scope="row">Title</th>
