@@ -3,12 +3,7 @@
 {% import "_macros.html" as macros %}
 {% block page_content %}
 <div class="container">
-    <form method="POST">
-    {{ form.hidden_tag() }}
-    {% for field in form if field.widget.input_type != 'hidden' %}
-        {{ wtf.form_field(field, autocomplete="off") }}
-    {% endfor %}
-    </form>
+    {{ macros.quick_form(form) }}
     <div class="modal fade" id="help" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">

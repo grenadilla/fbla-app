@@ -1,3 +1,5 @@
+{% import "bootstrap/wtf.html" as wtf %}
+
 {% macro pagination_widget(pagination, endpoint, fragment='') %}
 {% if pagination.pages > 1 %}
 <ul class="pagination">
@@ -41,4 +43,23 @@
 of {{ pagination.total }}
 </p>
 {% endif %}
+{% endmacro %}
+
+{% macro quick_form(form, cancel=False, form_title=None, noautocomplete=True) %}
+    {% if form_title is not none %}
+        <h3>{{ form_title }}</h3>
+    {% endif %}
+    <form method="POST">
+    {{ form.hidden_tag() }}
+    {% for field in form if field.widget.input_type != 'hidden' %}
+        {% if noautocomplete %}
+        {{ wtf.form_field(field, autocomplete="off") }}
+        {% else %}
+        {{ wtf.form_field(field) }}
+        {% endif %}
+    {% endfor %}
+    {% if cancel %}
+        <input class="btn btn-warning my-2 my-sm-0 cancel-button" type="button" value="Cancel"></input>
+    {% endif %}
+    </form>
 {% endmacro %}

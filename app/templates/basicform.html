@@ -1,18 +1,9 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros %}
 
 {% block page_content %}
 <div class="container">
-    {% if form_title is defined %}
-    <h3>{{ form_title }}</h3>
-    {% endif %}
-    
-    <form method="POST">
-    {{ form.hidden_tag() }}
-    {% for field in form if field.widget.input_type != 'hidden' %}
-        {{ wtf.form_field(field, autocomplete="off") }}
-    {% endfor %}
-    <input class="btn btn-warning my-2 my-sm-0 cancel-button" type="button" value="Cancel"></input>
-    </form>
+{{ macros.quick_form(form, form_title=form_title, cancel=True) }}
 </div>
 {% endblock %}

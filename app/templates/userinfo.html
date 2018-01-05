@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
-{% block page_content %}
+{% import "_macros.html" as macros %}
 
+{% block page_content %}
 <div class="container">
     <h3 style="display: inline-block">User</h3>
     <a class="btn btn-default" style="display: inline-block" href={{ url_for('edituser', _external=True, id=user.id )}}>Edit</a>
@@ -82,23 +83,13 @@
     <hr>
     {% if user.total_fines > 0%}
         <h3>Pay a Fine</h3>
-        <form method="POST">
-        {{ payfine.hidden_tag() }}
-        {% for field in payfine if field.widget.input_type != 'hidden' %}
-            {{ wtf.form_field(field, autocomplete="off") }}
-        {% endfor %}
-        </form>
+        {{ macros.quick_form(payfine) }}
     {% endif %}
     <h3 style="display: inline-block;">Borrow a Book</h3>
     {% if 'userid' in session and session['userid'] == user.id and user.books|length > 0 %}
         <a class="btn btn-default" href={{ url_for('returnbook', id='all' )}}>Return All</a>
     {% endif %}
-    <form method="POST">
-    {{ borrow.hidden_tag() }}
-    {% for field in borrow if field.widget.input_type != 'hidden' %}
-        {{ wtf.form_field(field, autocomplete="off") }}
-    {% endfor %}
-    </form>
+    {{ macros.quick_form(borrow) }}
     <h3>Books</h3>
     <table class="table table-bordered table-hover">
         <thead>
