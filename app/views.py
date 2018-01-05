@@ -336,9 +336,9 @@ def returnbook(id):
         if copy.borrower_id == session['userid']:
             # calculate fines
             delta = datetime.datetime.utcnow() - copy.return_time
-            if delta > datetime.timedelta(0):
-                fine = (delta.days + 1) * copy.borrower.usertype.fine
-                user = models.User.query.filter_by(id=session['userid']).first()
+            fine = copy.calc_fine(copy.borrower.usertype.fine)
+            user = models.User.query.filter_by(id=session['userid']).first()
+            if fine > 0:
                 user.total_fines += fine
                 flash("Fine of " + str(fine / 100))
             # reset borrow variables

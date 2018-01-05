@@ -36,6 +36,12 @@ class User(db.Model):
                 num += 1
         return num
 
+    def overdue_fine(self):
+        fine = 0
+        for copy in self.books:
+            fine += copy.calc_fine(self.usertype.fine)
+        return fine
+
     def __repr__(self):
         return '<User %r>' % (self.name)
 
@@ -88,6 +94,15 @@ class Copy(db.Model):
         time_left = self.return_time - datetime.datetime.utcnow()
         return (str(abs(time_left.days)) + " days, " + str(int(time_left.seconds/3600)) 
                + " hours")
+
+    def calc_fine(self, fine):
+        # Given fine in cents per day, calculates fine on book
+        if self.return_time is None:
+            return 0
+        delta = datetime.datetime.utcnow() - self.return_time
+        if delta > datetime.timedelta(0):
+            return (delta.days + 1) * fine
+        return 0
 
     def __repr__(self):
         return '<Book-Copy %r, id:%r>' % (self.book.title, self.id)
