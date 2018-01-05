@@ -490,8 +490,11 @@ def search():
     
     if search_type == 'book':
         copy_query = models.Copy.query.filter_by(id=id).first()
-        query = models.Book.query.filter_by(id=copy_query.book_id)
-        query = query.union(models.Book.query.filter_by(id=id))
+        if copy_query is not None:
+            query = models.Book.query.filter_by(id=copy_query.book_id)
+            query = query.union(models.Book.query.filter_by(id=id))
+        else:
+            query = models.Book.query.filter_by(id=id)
         #Adds adds more results without duplicates
         query = query.union(models.Book.query.filter(func.lower(models.Book.title) == func.lower(keyword)))
         query = query.union(models.Book.query.filter(models.Book.title.ilike(keyword+' %')))
