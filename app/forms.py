@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, SelectField, IntegerField
+from wtforms import StringField, SubmitField, SelectField, IntegerField, DecimalField
 from wtforms.validators import Required
 from app import db, models
 
@@ -62,5 +62,9 @@ class Search(FlaskForm):
     submit = SubmitField('Search')
 
 class Borrow(FlaskForm):
-    bookid = IntegerField("ID of book copy", validators=[Required()])
+    bookid = IntegerField("ID of book copy")
     submit = SubmitField('Borrow')
+
+class PayFine(FlaskForm):
+    amount = DecimalField("Amount to pay", places=2)
+    submit = SubmitField('Pay')

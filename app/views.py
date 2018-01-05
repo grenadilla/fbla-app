@@ -61,14 +61,29 @@ def user(id):
         signin(login.login_data.data)
         return redirect(redirect_url())
     
-    form = forms.Borrow()
-    if form.validate_on_submit():
-        return redirect(url_for('borrow', id=form.bookid.data))
+    borrow = forms.Borrow()
+    if borrow.validate_on_submit() and borrow.bookid.data is not None:
+        return redirect(url_for('borrow', id=borrow.bookid.data))
+
     user = models.User.query.filter_by(id=id).first()
+    payfine = forms.PayFine()
+    if payfine.validate_on_submit() and payfine.amount.data is not None:
+        amount = round(payfine.amount.data*100)
+        if amount > user.total_fines:
+            flash("Payed off all fines, totaling $"
+                  + str(user.dec_total_fines()) + ". Change is $" + str((amount-user.total_fines)/100))
+            user.total_fines = 0
+        else:
+            user.total_fines -= amount
+            flash("Payed $" + str(payfine.amount.data) + ", with $" + str(user.dec_total_fines())
+                  + " in fines left")
+        db.session.commit()
+        return redirect(url_for('user', id=id))
     return render_template('userinfo.html', 
                            user=user, 
                            login=login,
-                           form=form)
+                           borrow=borrow,
+                           payfine=payfine)
 
 
 @app.route('/author/<id>', methods=['GET', 'POST'])
