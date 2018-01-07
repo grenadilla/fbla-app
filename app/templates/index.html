@@ -18,5 +18,102 @@
     {% else %}
         <p>{{ checked_out_num }} books have been checked out by {{ borrowing_users }} user{% if borrowing_users >= 1 %}s{% endif %}</p>
     {% endif %}
+    <hr>
+    <h2>Help</h2>
+    <div class="panel-group" id="accordion">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" href="#collapse1">Navigation</a>
+                </h4>
+            </div>
+            <div id="collapse1" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <img src={{ url_for('static', filename='images/home.png') }}>
+                    <dl>
+                        <dt><b>Home</b></dt>
+                        <dd>The page you are on right now.</dd>
+                        <dt><b>User</b></dt>
+                        <dd>
+                            The name of the logged in user. Clicking on this name will bring you to the user page
+                            for this user, where fines can be payed and books can be borrowed. 
+                        </dd>
+                        <dt><b>Catalog</b></dt>
+                        <dd>The catalog of all books in the system. Here you can search for books and authors by ID, name, and title.</dd>
+                        <dt><b>Users</b></dt>
+                        <dd>Choose here to view either a list of all students or a list of all teachers in the system</dd>
+                        <dt><b>Add</b></dt>
+                        <dd>This is where new users, authors, and books are added into the system.</dd>
+                        <dt><b>Fines</b></dt>
+                        <dd>A list of users with unpaid fines</dd>
+                        <dt><b>Borrowed Books</b></dt>
+                        <dd>A list of all borrowed books. Select 'overdue' to view only overdue books</dd>
+                        <dt><b>User Settings</b></dt>
+                        <dd>
+                            Change settings for students and teachers such as how long they can borrow a book, 
+                            their daily fines, and how many books they can borrow at a time.
+                        </dd>
+                        <dt><b>Login</b></dt>
+                        <dd>
+                            Change the currently logged in user by inputting a student or teacher's name or ID number.
+                            A logged in user can pay off fines and borrow books. 
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" href="#collapse2">Adding Data</a>
+                </h4>
+            </div>
+            <div id="collapse2" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <img src={{ url_for('static', filename='images/addbook.png') }}>
+                    <p>
+                        From the 'Add' dropdown you can choose to add users, authors, or books into the system.
+                        The image here depicts the page for adding a new book.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" href="#collapse3">The User Page</a>
+                </h4>
+            </div>
+            <div id="collapse3" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <img src={{ url_for('static', filename='images/user.png') }}>
+                    <p>
+                        This is the user page, where students and teachers can pay fines and borrow books.
+                        To access this page, the user must first be logged in. If the user has any unpaid fines,
+                        the input line for to record fine payment will show up. Books can be borrowed here by inputting
+                        their copy ID number. Click the help button on the user page for more information.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" href="#collapse4">The Catalog</a>
+                </h4>
+            </div>
+            <div id="collapse4" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <img src={{ url_for('static', filename='images/catalog.png') }}>
+                    <p>
+                        This is the catalog, a list of all books in the database. From here
+                        you can search for books by both their title ID and their unique copy ID,
+                        and normal search terms in general. Authors can also be searched for here.
+                        For more information, click on the help button on the catalog page.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
