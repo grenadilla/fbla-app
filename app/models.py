@@ -1,6 +1,7 @@
 from app import db
 import datetime
-from sqlalchemy.ext.hybrid import hybrid_property #, hybrid_method
+from dateutil import tz
+
 
 class UserType(db.Model):
     __tablename__ = 'usertypes'
@@ -112,6 +113,26 @@ class Copy(db.Model):
         if delta > datetime.timedelta(0):
             return (delta.days + 1) * fine
         return 0
+
+    def pretty(self, date_time):
+        date = date_time.date()
+        time = date_time.time()
+        if time.minute < 10:
+            minute_string = "0" + str(time.minute)
+        else:
+            minute_string = str(time.minute)
+        if time.hour > 12:
+            time_string = str(time.hour-12) + ":" + minute_string + " PM"
+        else:
+            time_string = str(time.hour) + ":" + minute_string + "AM"
+        date_string = str(date.month) + "/" + str(date.day) + "/" + str(date.year)
+        return date_string + " at " + time_string
+
+    def borrow_time_pretty(self):
+        return self.pretty(self.borrow_time.replace(tzinfo=tz.tzutc()).astimezone(tz.tzlocal()))
+
+    def return_time_pretty(self):
+        return self.pretty(self.return_time.replace(tzinfo=tz.tzutc()).astimezone(tz.tzlocal()))
 
     def __repr__(self):
         return '<Book-Copy %r, id:%r>' % (self.book.title, self.id)

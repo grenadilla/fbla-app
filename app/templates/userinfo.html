@@ -114,7 +114,7 @@
                 <td class="clickable-link" data-href={{ url_for('book', id=copy.book.id) }}>{{ copy.id }}</td>
                 <td class="clickable-link" data-href={{ url_for('book', id=copy.book.id) }}>{{ copy.book.title }}</td>
                 <td class="clickable-link" data-href={{ url_for('author', id=copy.book.author_id) }}>{{ copy.book.author.name }}</td>
-                <td class="clickable-link" data-href={{ url_for('book', id=copy.book.id) }}>{{ copy.return_time }}</td>
+                <td class="clickable-link" data-href={{ url_for('book', id=copy.book.id) }}>{{ copy.return_time_pretty() }}</td>
                 <td class="clickable-link" data-href={{ url_for('book', id=copy.book_id) }}>{{ copy.time_left() }}</td>
             </tr>
         {% endfor %}
