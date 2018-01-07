@@ -75,13 +75,13 @@
         </tr>
         <tr>
             <th scope="row">Fines</th>
-            <td>{{ '$' ~ '%0.2f'| format(user.dec_total_fines()|float)}}</td>
+            <td>{{ '$' ~ '%0.2f'| format(user.dec_total_fines()|float) }}</td>
         </tr>
     </table>
     {% if user.overdue_num() > 1 %}
-        <p>This user has fines of {{ user.overdue_fine() }} in overdue books which will be added after the books are returned</p>
+        <p>This user has fines of {{ '$' ~ '%0.2f'| format((user.overdue_fine()/100)|float) }} in overdue books which will be added after the books are returned</p>
     {% elif user.overdue_num() > 0 %}
-        <p>This user has a fine of {{ user.overdue_fine() }} in one overdue book which will be added after the book is returned</p>
+        <p>This user has a fine of {{ '$' ~ '%0.2f'| format((user.overdue_fine()/100)|float) }} in one overdue book which will be added after the book is returned</p>
     {% endif %}
     <hr>
     {% if user.total_fines > 0%}

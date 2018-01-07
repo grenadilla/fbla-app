@@ -89,11 +89,17 @@ class Copy(db.Model):
     def is_overdue(self):
         return datetime.datetime.utcnow() > self.return_time
 
-    def time_left(self):
+    def time_left(self, absolute=False):
         #Creates timedelta. Note that the function converts the result to positive
         time_left = self.return_time - datetime.datetime.utcnow()
-        return (str(abs(time_left.days)) + " days, " + str(int(time_left.seconds/3600)) 
-               + " hours")
+        if absolute:
+            return (str(abs(time_left.days)) + " days, " + str(int(time_left.seconds/3600)) 
+                    + " hours")
+        if time_left.days < 0:
+            return "Overdue"
+        return (str(time_left.days) + " days, " + str(int(time_left.seconds/3600)) 
+                + " hours")
+
 
     def calc_fine(self, fine):
         # Given fine in cents per day, calculates fine on book
