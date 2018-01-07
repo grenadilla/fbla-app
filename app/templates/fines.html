@@ -18,8 +18,8 @@
                 </div>
                 <div class="modal-body">
                     <p>
-                        This page displays a list of all unpaid fines. Clicking on a row in the
-                        table will take you to the page of the student or teacher.
+                        This page displays a list of all unpaid fines and the accumulated fines of current overdue books.
+                        Clicking on a row in the table will take you to the page of the student or teacher.
                     </p>
                 </div>
                 <div class="modal-footer">
@@ -34,12 +34,14 @@
             <th>ID</th>
             <th>Name</th>
             <th>Fines Due</th>
+            <th>Uncounted Fines</th>
         </thead>
         {% for user in users %}
         <tr class="clickable-link" data-href={{ url_for('user', id=user.id) }}>
             <td>{{ user.id }}</td>
             <td>{{ user.name }}</td>
             <td>{{ '$' ~ '%0.2f'| format(user.dec_total_fines()|float) }}</td>
+            <td>{{ '$' ~ '%0.2f'| format((user.calc_overdue_fines()/100)|float) }}</td>
         </tr>
         {% endfor %}
     </table>

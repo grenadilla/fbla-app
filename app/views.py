@@ -355,7 +355,7 @@ def returnbook(id):
             user = models.User.query.filter_by(id=session['userid']).first()
             if fine > 0:
                 user.total_fines += fine
-                flash("Fine of " + str(fine / 100))
+                flash("Fine of $" + str(fine / 100))
             # reset borrow variables
             copy.borrower = None
             copy.borrow_time = None
@@ -635,9 +635,13 @@ def fines():
     if login.validate_on_submit():
         signin(login.login_data.data)
         return redirect(redirect_url())
-
+    for user in models.User.query.all():
+        user.overdue_fines = user.calc_overdue_fines()
+        db.session.commit()
     page = request.args.get('page', 1, type=int)
-    pagination = models.User.query.filter(models.User.total_fines > 0).order_by(
+    query = models.User.query.filter(models.User.total_fines > 0)
+    query = query.union(models.User.query.filter(models.User.overdue_fines > 0))
+    pagination = query.order_by(
                  models.User.id.asc()).paginate(
                  page, per_page=current_app.config['POSTS_PER_PAGE'],
                  error_out=False)

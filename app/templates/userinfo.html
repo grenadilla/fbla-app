@@ -50,7 +50,8 @@
                         clicking on the 'Return All' button.
                     </p>
                     <p>
-                        If the user has any fines, they can be paid here. You can also borrow books here by inputting the book's ID number.
+                        If the user has any fines, they can be paid here. Fines of overdue books cannot be paid until the books are returned.
+                        You can also borrow books here by inputting the book's ID number.
                     </p>
                 </div>
                 <div class="modal-footer">
@@ -79,9 +80,9 @@
         </tr>
     </table>
     {% if user.overdue_num() > 1 %}
-        <p>This user has fines of {{ '$' ~ '%0.2f'| format((user.overdue_fine()/100)|float) }} in overdue books which will be added after the books are returned</p>
+        <p>This user has fines of {{ '$' ~ '%0.2f'| format((user.calc_overdue_fines()/100)|float) }} in overdue books which will be added after the books are returned</p>
     {% elif user.overdue_num() > 0 %}
-        <p>This user has a fine of {{ '$' ~ '%0.2f'| format((user.overdue_fine()/100)|float) }} in one overdue book which will be added after the book is returned</p>
+        <p>This user has a fine of {{ '$' ~ '%0.2f'| format((user.calc_overdue_fines()/100)|float) }} in one overdue book which will be added after the book is returned</p>
     {% endif %}
     <hr>
     {% if user.total_fines > 0%}

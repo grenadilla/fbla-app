@@ -1,5 +1,6 @@
 from app import db
 import datetime
+from sqlalchemy.ext.hybrid import hybrid_property #, hybrid_method
 
 class UserType(db.Model):
     __tablename__ = 'usertypes'
@@ -23,6 +24,8 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), index=True, unique=True)
     total_fines = db.Column(db.Integer())
+    # Need to recalculate overdue_fines with overdue_fines() every time you access it
+    overdue_fines = db.Column(db.Integer())
     books = db.relationship('Copy', backref='borrower')
     type_name = db.Column(db.String, db.ForeignKey('usertypes.name'))
 
@@ -36,12 +39,12 @@ class User(db.Model):
                 num += 1
         return num
 
-    def overdue_fine(self):
+    def calc_overdue_fines(self):
         fine = 0
         for copy in self.books:
             fine += copy.calc_fine(self.usertype.fine)
         return fine
-
+    
     def __repr__(self):
         return '<User %r>' % (self.name)
 
