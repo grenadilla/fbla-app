@@ -4,7 +4,7 @@ import datetime
 from dateutil import tz
 from app import app, db, models, forms
 
-# create tables for author query if tables do not exist
+# create userstypes if they do not exist
 db.create_all()
 if models.UserType.query.filter_by(name='student').first() is None:
     role_student = models.UserType(name='student',
@@ -40,6 +40,7 @@ def index():
     for copy in copies:
         if copy.borrower is not None:
             checked_out_num += 1
+    # Find number of users that have checked out books
     for user in users:
         if len(user.books) > 0:
             borrowing_users += 1
@@ -62,10 +63,12 @@ def user(id):
         signin(login.login_data.data)
         return redirect(redirect_url())
     
+    # Form to borrow books from user page
     borrow = forms.Borrow()
     if borrow.validate_on_submit() and borrow.bookid.data is not None:
         return redirect(url_for('borrow', id=borrow.bookid.data))
 
+    # Form to pay fines
     user = models.User.query.filter_by(id=id).first()
     payfine = forms.PayFine()
     if payfine.validate_on_submit() and payfine.amount.data is not None:
@@ -80,6 +83,7 @@ def user(id):
                   + " in fines left")
         db.session.commit()
         return redirect(url_for('user', id=id))
+    
     return render_template('userinfo.html', 
                            user=user, 
                            login=login,
@@ -103,7 +107,7 @@ def author(id):
 @app.route('/book/<id>', methods=['GET', 'POST'])
 def book(id):
     # Given book (not copy) id, queries it and passes book data to page to
-    # display book info page, from here can borrow a book
+    # display book info page, from here can borrow and return book copies
     login = forms.Login()
     if login.validate_on_submit():
         signin(login.login_data.data)
@@ -111,7 +115,7 @@ def book(id):
 
     book = models.Book.query.filter_by(id=id).first()
     
-    # Checks if user has borrowed a book, passes list if IDs of borrowed copies
+    # Checks if user has borrowed a book copy, passes list if IDs of borrowed copies
     borrowed_id = []
     for copy in book.copies:
         if 'userid' in session and session['userid'] is not None and session['userid'] == copy.borrower_id:
@@ -175,7 +179,7 @@ def editauthor(id):
 
 @app.route('/edit/book/<id>', methods=['GET', 'POST'])
 def editbook(id):
-    # Page to edit book data like title and author
+    # Page to edit book data like title and author and add more copies
     login = forms.Login()
     if login.validate_on_submit():
         signin(login.login_data.data)
@@ -208,6 +212,7 @@ def editbook(id):
 
 @app.route('/edit/usertypes', methods=['Get', 'POST'])
 def editusertypes():
+    # Page to edit user settings, such as book limit, fines, and length of borrow time
     login = forms.Login()
     if login.validate_on_submit():
         signin(login.login_data.data)
@@ -241,6 +246,7 @@ def editusertypes():
 
 @app.route('/delete/user/<id>', methods=['GET'])
 def deleteuser(id):
+    # Delete a user
     user = models.User.query.filter_by(id=id).first()
     if user is not None:
         flash("Deleted user " + user.name + " ID: " + str(user.id))
@@ -256,6 +262,7 @@ def deleteuser(id):
 
 @app.route('/delete/author/<id>', methods=['GET'])
 def deleteauthor(id):
+    # Delete an author
     author = models.Author.query.filter_by(id=id).first()
     if author is not None:
         flash("Deleted author " + author.name + " ID: " + str(author.id))
@@ -273,6 +280,7 @@ def deleteauthor(id):
 
 @app.route('/delete/book/<id>', methods=['GET'])
 def deletebook(id):
+    # Delete a book
     book = models.Book.query.filter_by(id=id).first()
     if book is not None:
         flash("Deleted book " + book.title + " ID: " + str(book.id))
@@ -287,6 +295,7 @@ def deletebook(id):
 
 @app.route('/delete/copy/<id>', methods=['GET'])
 def deletecopy(id):
+    # Delete a book copy
     copy = models.Copy.query.filter_by(id=id).first()
     book = copy.book
     if copy is not None:
@@ -310,7 +319,7 @@ def borrow(id):
     # Page to borrow a book, accessed by redirect from book page
     # Does not display page, instead redirects to previous page
     # ID is copy ID, not book ID
-    # If user is logged in, user borrows first available copy of book
+    # If user is logged in, user can borrow and return books
     if 'userid' in session and session['userid'] is not None:
         user = models.User.query.filter_by(id=session['userid']).first()
         if len(user.books) >= user.usertype.book_limit:
@@ -337,6 +346,7 @@ def borrow(id):
 
 @app.route('/returnbook/<id>', methods=['GET'])
 def returnbook(id):
+    # Returns a book copy
     if 'userid' not in session or session['userid'] is None:
         flash("Error: User not logged in; cannot return book")
         return redirect(redirect_url())
@@ -407,12 +417,14 @@ def catalog():
         signin(login.login_data.data)
         return redirect(redirect_url())
 
+    # Search form
     form = forms.Search()
     if form.validate_on_submit():
         return redirect(url_for('search', 
                                 search_type=form.search_type.data, 
                                 keyword=form.keyword.data))
     
+    # Pagination for catalog of all books
     page = request.args.get('page', 1, type=int)
     pagination = models.Book.query.order_by(models.Book.id.asc()).paginate(
                  page, per_page=current_app.config['POSTS_PER_PAGE'],
@@ -432,6 +444,7 @@ def students():
         signin(login.login_data.data)
         return redirect(redirect_url())
 
+    # Pagination of all students
     page = request.args.get('page', 1, type=int)
     pagination = models.User.query.filter(models.User.type_name == 'student').order_by(
                  models.User.id.asc()).paginate(page, per_page=current_app.config['POSTS_PER_PAGE'],
@@ -453,6 +466,7 @@ def teachers():
         signin(login.login_data.data)
         return redirect(redirect_url())
 
+    # Pagination of all teachers
     page = request.args.get('page', 1, type=int)
     pagination = models.User.query.filter(models.User.type_name == 'teacher').order_by(
                  models.User.id.asc()).paginate(page, per_page=current_app.config['POSTS_PER_PAGE'],
@@ -490,13 +504,15 @@ def search():
         id = 0
     
     if search_type == 'book':
+        # Search for book and copy with ID
         copy_query = models.Copy.query.filter_by(id=id).first()
         if copy_query is not None:
             query = models.Book.query.filter_by(id=copy_query.book_id)
             query = query.union(models.Book.query.filter_by(id=id))
         else:
             query = models.Book.query.filter_by(id=id)
-        #Adds adds more results without duplicates
+        # Adds adds more results without duplicates
+        # Searches for books with search term inside the title
         query = query.union(models.Book.query.filter(func.lower(models.Book.title) == func.lower(keyword)))
         query = query.union(models.Book.query.filter(models.Book.title.ilike(keyword+' %')))
         query = query.union(models.Book.query.filter(models.Book.title.ilike('% '+keyword)))
@@ -594,6 +610,7 @@ def addbook():
     title = None
     form = forms.NewBook()
 
+    # Create list of all authors to put in author choice form
     choices = [(None, "--Choose an author--")]
     authors = models.Author.query.order_by(func.substr(models.Author.name, func.instr(models.Author.name, ' '))).all()
     for author in authors:
@@ -632,6 +649,7 @@ def addbook():
 
 @app.route('/fines', methods=['GET', 'POST'])
 def fines():
+    # List of all fines
     login = forms.Login()
     if login.validate_on_submit():
         signin(login.login_data.data)
