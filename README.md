@@ -9,7 +9,52 @@ Vlib is a database program written in the Python programming language using the 
 1. [How It Works](#how-it-works)
 
 ## How To Use <a name="how-to-use"></a>
+### Navigation
+![Home](app/static/images/home.png)
 
++ **Home**
+    + The page you are on right now.
++ **User**
+    + The name of the logged in user. Clicking on this name will bring you to the user page for this user, where fines can be payed and books can be borrowed. 
++ **Catalog**
+    + The catalog of all books in the system. Here you can search for books and authors by ID, name, and title.
++ **Users**
+    + Choose here to view either a list of all students or a list of all teachers in the system
++ **Add**
+    + This is where new users, authors, and books are added into the system.
++ **Fines**
+    + A list of users with unpaid fines.
++ **Borrowed Books**
+    + A list of all borrowed books. Select 'overdue' to view only overdue books.
++ **User Settings**
+    + Change settings for students and teachers such as how long they can borrow a book, their daily fines, and how many books they can borrow at a time.
++ **Login**
+    + Change the currently logged in user by inputting a student or teacher's name or ID number. A logged in user can pay off fines and borrow books. 
+
+### Adding Data
+![Adding Data](app/static/images/addbook.png)
+
+Users (students and teachers), authors, and books can be added into the system by clicking on the 'Add' dropdown and choosing an option. Books require valid authors to be added before they can be added. Pictured above is the page where you can add data for a new book.
+
+### The User Page
+![The User Page](app/static/images/user.png)
+
+The user page has information on the user, including their ID number, whether they are a student or teacher, their unpaid fines, and a list of their books. From the user page librarians can input the ID number of books to keep track of the books students and teachers have borrowed. From the user page librarians can also keep track of fine payments by users by inputting them in the system here. Clicking on the name of the author of a book will take you to the information page for that author. Clicking on any other information on a book will take you to that book's information page, where the book can be returned. Click on the edit page to change the user's name and whether they are a student or teacher.
+
+### The Book Page
+![The Book Page](app/static/images/book.png)
+
+The book page has information on the book, including its ID number, author, and each of its copies. Clicking on the author's name will take you to the author's page. Clicking on the name of any student or teacher borrowing a copy will take you to the information page for that user. The table of copies displays information on who is borrowing the copy and the time of borrowing and due data, if any. Click on the edit button to change the book's title and its author, and to add additional copies. Clicking on the red 'X' next to the ID number of a copy will allow you to delete that copy. Finally, book copies can be borrowed or returned here, but only if a user is logged in.
+
+### The Author Page
+![The Author Page](app/static/images/author.png)
+
+The author page has information on the author, including ID number and name. It lists all the books the author has written and the number of available copies for each. Clicking on any of the books will take you to the page for that book.
+
+### The Catalog
+![The Catalog](app/static/images/catalog.png)
+
+The catalog allows you to search for books and author by ID number, title, and name. Clicking on a book's title will take you to its page, and clicking on the name of an author will take you to the author's page. Below the search bar is a list of all books in the system.
 
 ## Tools Used <a name="tools-used"></a>
 VLib was written mainly using Python 3, using the following modules and their dependencies (a full list can be found in [requirements.txt](requirements.txt)):
@@ -40,10 +85,16 @@ The basic structure of the application is as follows:
         forms.py
         views.py
         static/
-          scripts.js
-          select2.min.js
-          style.css
-          select2.min.css
+          js/
+            scripts.js
+            select2.min.js
+          css/
+            style.css
+            select2.min.css
+          images/
+            home.png
+            ...
+            etc.
         templates/
           base.html
           index.html
@@ -80,12 +131,13 @@ models.py creates all the data classes to be used by SQLAlchemy and the tables t
 Since views.py holds the vast majority of the program logic, it will have an entire section devoted to it. See [How It Works](#how-it-works).
 
 ### static
-The static folder holds all static files, which in the case of VLib is all javascript and CSS files. The [JQuery](https://jquery.com/) javascript library is already included through Bootstrap. The JQuery addon [select2](https://select2.org/) is used to create better select tags in webforms.
+The static folder holds all static files, which in the case of VLib is all javascript and CSS files and all the images used in the help page. The [JQuery](https://jquery.com/) javascript library is already included through Bootstrap. The JQuery addon [select2](https://select2.org/) is used to create better select tags in webforms.
 
 ### templates
 The templates folder holds all the jinja2 templates is used to create the html page sent to the client's computer. Note that although all the files in this folder end with the .html extension, they have included jinja2 template logic within.
 
 ## How It Works <a name="how-it-works"></a>
+### Routes
 Most of the program logic is held in views.py. The views file defines all the routes in the webapp. When a user clicks a link in the application, they are routed to the corresponding route, where the route function will perform some logic before either sending a redirect to another page or displaying a jinja2 template (stored in the templates folder) to be shown to the user. All routes are declared using Python decorater functions in their most basic form like so:
 
     @app.route('/some_path/<variable>', methods=['GET', POST'])
@@ -94,6 +146,7 @@ Most of the program logic is held in views.py. The views file defines all the ro
         return render_template('template.html',
                                variable=variable)
 
+### jinja2 templates
 When rendering templates the route function can pass variables to be used by the jinja2 template engine. The jinja2 template engine can parse Python like syntax in brackets like `{% %}` or `{{ }}`, so template.html might look something like this:
 
     {% extends "base.html" %}
@@ -106,8 +159,19 @@ When rendering templates the route function can pass variables to be used by the
 
 Many templates have `{% extends "base.html" %}` as their first line. base.html includes all the required javascript and CSS files, and defines the navigation bar at the top of each page. By creating a base template from which all other templates are descended from, a large navigation bar will not have to be redefined in each template.
 
+### Database queries
 Near top of the views file is this line: `from app import models, db`. Database queries and changes are done using the models file and db (database) file respectively. Queries are done using SQLAlchemy, and take the form `object = models.Class.query.filter_by(attribute=some_value).first()`. New data can be added simply by creating a new instance of the class, adding to the session, and committing to the database: 
 
     object = models.Class(attribute=some_value)
     db.session.add(object)
     db.session.commit()
+
+Database queries are done in SQLAlchemy either using the form:
+
+    users = models.User.query.filter_by(total_fines = 0).all()
+
+Or:
+
+    users = models.User.query.filter(models.User.total_fines == 0).all()
+
+The second form has much more versatility than the first, such as being able to use less than and greater than and various SQLAlchemy functions.
