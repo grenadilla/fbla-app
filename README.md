@@ -8,7 +8,7 @@ Vlib is a database program written in the Python programming language using the 
 1. [File Structure](#file-structure)
 1. [How It Works](#how-it-works)
 
-## How To Use
+## How To Use <a name="how-to-use"></a>
 ### Navigation
 ![Home](app/static/images/home.png)
 
@@ -56,7 +56,7 @@ The author page has information on the author, including ID number and name. It 
 
 The catalog allows you to search for books and author by ID number, title, and name. Clicking on a book's title will take you to its page, and clicking on the name of an author will take you to the author's page. Below the search bar is a list of all books in the system.
 
-## Tools Used
+## Tools Used <a name="tools-used"></a>
 VLib was written mainly using Python 3, using the following modules and their dependencies (a full list can be found in [requirements.txt](requirements.txt)):
 
 * [Flask](http://flask.pocoo.org/):
@@ -72,7 +72,7 @@ Pywebview is a webview wrapper used in VLib for offline use to load VLib in its 
 * [cx\_freeze](https://anthony-tuininga.github.io/cx_Freeze/):
 cx\_freeze is a tool used to freeze VLib into an executable that can be run on windows without the need for the user to download any extra dependencies such as Python. The frozen version of VLib has all dependencies packaged with it for an easy download.
 
-## File Structure
+## File Structure <a name="file-structure"></a>
 The basic structure of the application is as follows:
 
     VLib/
@@ -136,7 +136,7 @@ The static folder holds all static files, which in the case of VLib is all javas
 ### templates
 The templates folder holds all the jinja2 templates is used to create the html page sent to the client's computer. Note that although all the files in this folder end with the .html extension, they have included jinja2 template logic within.
 
-## How It Works
+## How It Works <a name="how-it-works"></a>
 ### Routes
 Most of the program logic is held in views.py. The views file defines all the routes in the webapp. When a user clicks a link in the application, they are routed to the corresponding route, where the route function will perform some logic before either sending a redirect to another page or displaying a jinja2 template (stored in the templates folder) to be shown to the user. All routes are declared using Python decorater functions in their most basic form like so:
 
