@@ -677,10 +677,16 @@ def fines():
         user.overdue_fines = user.calc_overdue_fines()
         db.session.commit()
     page = request.args.get('page', 1, type=int)
+    sort_by = request.args.get('sort_by', 'user_id')
     query = models.User.query.filter(models.User.total_fines > 0)
     query = query.union(models.User.query.filter(models.User.overdue_fines > 0))
-    pagination = query.order_by(
-                 models.User.id.asc()).paginate(
+    if sort_by == 'useraz':
+        query = query.order_by(models.User.name.asc())
+    elif sort_by == 'userfine':
+        query = query.order_by(models.User.total_fines.desc())
+    else:
+        query = query.order_by(models.User.id.asc())
+    pagination = query.paginate(
                  page, per_page=current_app.config['POSTS_PER_PAGE'],
                  error_out=False)
 

@@ -29,6 +29,16 @@
             </div>
         </div>
     </div>
+    <span class="dropdown">
+        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+            Sort By <b class="caret"></b>
+        </button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href={{ url_for("fines", sort_by="userid") }}>ID</a></li>
+            <li><a class="dropdown-item" href={{ url_for("fines", sort_by="useraz") }}>Name</a></li>
+            <li><a class="dropdown-item" href={{ url_for("fines", sort_by="userfine") }}>Fines</a></li>
+        </ul>
+    </span>
     <!--Pagination and table of users with fines-->
     {{ macros.result_counter(pagination) }}
     <table class="table table-bordered table-hover">
