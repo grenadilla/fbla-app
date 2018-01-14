@@ -4,7 +4,16 @@
 {% block page_content %}
 
 <div class="container">
-    <h1>{{ usertype|title }} Data</h1>
+    <h1 style="display: inline-block;">{{ usertype|title }} Data</h1>
+    <span class="dropdown">
+        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+            Sort By <b class="caret"></b>
+        </button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href={{ url_for(address, sort_by="userid") }}>ID</a></li>
+            <li><a class="dropdown-item" href={{ url_for(address, sort_by="useraz") }}>Name</a></li>
+        </ul>
+    </span>
     <table class="table table-bordered table-hover">
         <thead>
             <th>ID</th>

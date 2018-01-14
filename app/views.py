@@ -444,10 +444,15 @@ def students():
         signin(login.login_data.data)
         return redirect(redirect_url())
 
+    sort_by = request.args.get('sort_by', 'userid')
     # Pagination of all students
     page = request.args.get('page', 1, type=int)
-    pagination = models.User.query.filter(models.User.type_name == 'student').order_by(
-                 models.User.id.asc()).paginate(page, per_page=current_app.config['POSTS_PER_PAGE'],
+    query = models.User.query.filter(models.User.type_name == 'student')
+    if sort_by == 'useraz':
+        query = query.order_by(models.User.name.asc())
+    else:
+        query = query.order_by(models.User.id.asc())
+    pagination = query.paginate(page, per_page=current_app.config['POSTS_PER_PAGE'],
                  error_out=False)
     users = pagination.items
     return render_template('users.html',
@@ -465,11 +470,16 @@ def teachers():
     if login.validate_on_submit():
         signin(login.login_data.data)
         return redirect(redirect_url())
-
+    
+    sort_by = request.args.get('sort_by', 'userid')
     # Pagination of all teachers
     page = request.args.get('page', 1, type=int)
-    pagination = models.User.query.filter(models.User.type_name == 'teacher').order_by(
-                 models.User.id.asc()).paginate(page, per_page=current_app.config['POSTS_PER_PAGE'],
+    query = models.User.query.filter(models.User.type_name == 'teacher')
+    if sort_by == 'useraz':
+        query = query.order_by(models.User.name.asc())
+    else:
+        query = query.order_by(models.User.id.asc())
+    pagination = query.paginate(page, per_page=current_app.config['POSTS_PER_PAGE'],
                  error_out=False)
     users = pagination.items
     return render_template('users.html',
