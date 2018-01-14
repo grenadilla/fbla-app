@@ -86,18 +86,20 @@
         <p>This user has a fine of {{ '$' ~ '%0.2f'| format((user.calc_overdue_fines()/100)|float) }} in one overdue book which will be added after the book is returned</p>
     {% endif %}
     <hr>
-    <!--Form to pay fines-->
-    {% if user.total_fines > 0%}
-        <h3>Pay a Fine</h3>
-        {{ macros.quick_form(payfine) }}
+    {% if 'userid' in session and user.id == session['userid'] %}
+        <!--Form to pay fines-->
+        {% if user.total_fines > 0%}
+            <h3>Pay a Fine</h3>
+            {{ macros.quick_form(payfine) }}
+        {% endif %}
+        <h3 style="display: inline-block;">Borrow a Book</h3>
+        {% if 'userid' in session and session['userid'] == user.id and user.books|length > 0 %}
+            <!--Button to return all books-->
+            <a class="btn btn-default" href={{ url_for('returnbook', id='all' )}}>Return All</a>
+        {% endif %}
+        <!--Form to borrow book by copy ID-->
+        {{ macros.quick_form(borrow) }}
     {% endif %}
-    <h3 style="display: inline-block;">Borrow a Book</h3>
-    {% if 'userid' in session and session['userid'] == user.id and user.books|length > 0 %}
-        <!--Button to return all books-->
-        <a class="btn btn-default" href={{ url_for('returnbook', id='all' )}}>Return All</a>
-    {% endif %}
-    <!--Form to borrow book by copy ID-->
-    {{ macros.quick_form(borrow) }}
     <!--Table of information for every book borrowed by user-->
     <h3>Books</h3>
     <table class="table table-bordered table-hover">
