@@ -3,6 +3,7 @@
 {% block page_content %}
 
 <div class="container">
+    <!--Delete and help modals-->
     <h3 style="display: inline-block">Book</h3>
     <a class="btn btn-default" style="display: inline-block" href={{ url_for('editbook', _external=True, id=book.id )}}>Edit</a>
     <!-- Button trigger modal -->
@@ -57,7 +58,7 @@
             </div>
         </div>
     </div>
-
+    <!--Table of book's info-->
     <table class="table table-hover">
         <tr>
             <th scope="row">Title</th>
@@ -90,7 +91,7 @@
         {% for copy in book.copies %}
             <tr>
                 <td>
-                    <!-- Button trigger modal -->
+                    <!-- Delete book copy modal-->
                     <button type="button" class="close" style="color: #f00;" data-toggle="modal" data-target={{ "#copyModal" ~ loop.index }}>
                           <span aria-hidden="true">&times;</span>
                     </button>

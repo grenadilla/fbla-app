@@ -3,6 +3,7 @@
 {% import "_macros.html" as macros %}
 {% block page_content %}
 <div class="container">
+    <!--Search bar and help modal-->
     {{ macros.quick_form(form) }}
     <div class="modal fade" id="help" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
@@ -32,6 +33,7 @@
     </div>
     {% if results|length > 0 %}
     {% if search_type == 'book' %}
+        <!--Book result help modal-->
         <h3 style="display: inline-block">Book Results</h3>
         <button type="button" class="btn btn-info" data-toggle="modal" data-target="#help">
             Help
@@ -56,6 +58,7 @@
             </tbody>
         </table>
     {% elif search_type == 'author' %}
+        <!--Help modal for author results-->
         <h3 style="display: inline-block;">Author Results</h3>
         <button type="button" class="btn btn-info" data-toggle="modal" data-target="#help">
             Help

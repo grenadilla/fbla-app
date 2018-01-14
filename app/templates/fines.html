@@ -3,6 +3,7 @@
 {% block page_content %}
 <div class="container">
 {% if users|length > 0 %}
+    <!--Help modal-->
     <h1 style="display: inline-block;">All Fines</h1>
     <button type="button" class="btn btn-info" data-toggle="modal" data-target="#help">
           Help
@@ -28,6 +29,7 @@
             </div>
         </div>
     </div>
+    <!--Pagination and table of users with fines-->
     {{ macros.result_counter(pagination) }}
     <table class="table table-bordered table-hover">
         <thead>
@@ -40,6 +42,7 @@
         <tr class="clickable-link" data-href={{ url_for('user', id=user.id) }}>
             <td>{{ user.id }}</td>
             <td>{{ user.name }}</td>
+            <!--Below formats fine, which is stored as floating point, in form $0.00-->
             <td>{{ '$' ~ '%0.2f'| format(user.dec_total_fines()|float) }}</td>
             <td>{{ '$' ~ '%0.2f'| format((user.calc_overdue_fines()/100)|float) }}</td>
         </tr>

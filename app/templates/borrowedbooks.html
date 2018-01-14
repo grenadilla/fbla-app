@@ -4,6 +4,7 @@
 
 <div class="container">
 {% if copies|length > 0 %}
+    <!--Help modal-->
     <h1 style="display: inline-block;">Borrowed Books</h1>
     <button type="button" class="btn btn-info" data-toggle="modal" data-target="#help">
           Help
@@ -31,6 +32,7 @@
         </div>
     </div>
     {{ macros.result_counter(pagination) }}
+    <!--Table of copy info-->
     <table class="table table-bordered table-hover">
         <thead>
             <th>Book ID</th>
@@ -41,11 +43,11 @@
             <th>Time Left</th>
         </thead>
         {% for copy in copies %}
-        {% if copy.is_overdue() %}
-        <tr class="danger">
-        {% else %}
-        <tr>
-        {% endif %}
+            {% if copy.is_overdue() %}
+                <tr class="danger">
+            {% else %}
+                <tr>
+            {% endif %}
             <td class="clickable-link" data-href={{ url_for('book', id=copy.book_id) }}>{{ copy.book_id }}</td>
             <td class="clickable-link" data-href={{ url_for('book', id=copy.book_id) }}>{{ copy.id }}</td>
             <td class="clickable-link" data-href={{ url_for('book', id=copy.book_id) }}>{{ copy.book.title }}</td>

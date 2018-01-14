@@ -4,6 +4,7 @@
 <div class="container">
     <h4>VLib 1.0</h4>
     <h2>Lorem Ipsum High School Library</h2>
+    <!--Below are just some statistics displayed on the home page-->
     <p>
     There {% if student.users|length > 1 %}are{% else %}is{% endif %} currently {{ student.users|length }} student{% if student.users|length > 1 %}s{% endif %} 
     and {{ teacher.users|length }} teacher{% if teacher.users|length > 1 %}s{% endif %} in the library system 
@@ -19,6 +20,7 @@
         <p>{{ checked_out_num }} books have been checked out by {{ borrowing_users }} user{% if borrowing_users >= 1 %}s{% endif %}</p>
     {% endif %}
     <hr>
+    <!--Help accordian with images-->
     <h2>Help</h2>
     <div class="panel-group" id="accordion">
         <div class="panel panel-default">
@@ -148,7 +150,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 {% endblock %}
