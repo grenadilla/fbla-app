@@ -715,6 +715,8 @@ def borrowedbooks():
         query = query.join(models.User, models.Copy.borrower).order_by(models.User.id.asc())
     elif sort_by == 'useraz':
         query = query.join(models.User, models.Copy.borrower).order_by(models.User.name.asc())
+    elif sort_by == 'duedate':
+        query = query.order_by(models.Copy.return_time.asc())
     else:
         query = query.order_by(models.Copy.id.asc())
 
@@ -748,6 +750,8 @@ def overduebooks():
         query = query.join(models.User, models.Copy.borrower).order_by(models.User.id.asc())
     elif sort_by == 'useraz':
         query = query.join(models.User, models.Copy.borrower).order_by(models.User.name.asc())
+    elif sort_by == 'duedate':
+        query = query.order_by(models.Copy.return_time.asc())
     else:
         query = query.order_by(models.Copy.id.asc())
 

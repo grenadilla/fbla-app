@@ -24,6 +24,9 @@
                         are overdue. Click on any book data to be directed to the book's information page,
                         and click on any user data to be directed to the borrower's information page.
                     </p>
+                    <p>
+                        Use the 'sort by' button to sort the list of overdue books.
+                    </p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -41,6 +44,7 @@
             <li><a class="dropdown-item" href={{ url_for("overduebooks", sort_by="bookaz") }}>Book Title</a></li>
             <li><a class="dropdown-item" href={{ url_for("overduebooks", sort_by="userid") }}>Borrower ID</a></li>
             <li><a class="dropdown-item" href={{ url_for("overduebooks", sort_by="useraz") }}>Borrower Name</a></li>
+            <li><a class="dropdown-item" href={{ url_for("overduebooks", sort_by="duedate") }}>Days Overdue</a></li>
         </ul>
     </span>
     {{ macros.result_counter(pagination) }}
