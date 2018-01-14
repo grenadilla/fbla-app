@@ -2,11 +2,10 @@ from app import db
 import datetime
 from dateutil import tz
 
-
+# UserType class had two instances: student and teacher
 class UserType(db.Model):
     __tablename__ = 'usertypes'
     id = db.Column(db.Integer, primary_key=True)
-    #Add back unique=True later
     name = db.Column(db.String(16), index=True, unique=True)
     borrow_length = db.Column(db.Interval())
     fine = db.Column(db.Integer())
@@ -25,7 +24,8 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), index=True, unique=True)
     total_fines = db.Column(db.Integer())
-    # Need to recalculate overdue_fines with overdue_fines() every time you access it
+    # Need to recalculate overdue_fines with calc_overdue_fines() every time you access it
+    # Overdue fines are stored as an integer to get around floating point arithmetic bugs
     overdue_fines = db.Column(db.Integer())
     books = db.relationship('Copy', backref='borrower')
     type_name = db.Column(db.String, db.ForeignKey('usertypes.name'))
@@ -34,6 +34,7 @@ class User(db.Model):
         return self.total_fines / 100
 
     def overdue_num(self):
+        # Return number of overdue books
         num = 0
         for copy in self.books:
             if datetime.datetime.utcnow() > copy.return_time:
@@ -61,8 +62,8 @@ class Author(db.Model):
 
 
 class Book(db.Model):
-    #Books are represented here, but they can have multiple unique copies
-    #Get number of copies with len(copies)
+    # Books are represented here, but they can have multiple unique copies
+    # Get number of copies with len(copies)
     __tablename__ = 'books'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(128), index=True)
@@ -81,7 +82,7 @@ class Book(db.Model):
 
 
 class Copy(db.Model):
-    #Copy of a book, each has unique id different from the book id
+    # Copy of a book, each has unique id different from the book id
     __tablename__ = 'copies'
     id = db.Column(db.Integer, primary_key=True)
     borrower_id = db.Column(db.Integer, db.ForeignKey('users.id'))
@@ -94,7 +95,7 @@ class Copy(db.Model):
         return datetime.datetime.utcnow() > self.return_time
 
     def time_left(self, absolute=False):
-        #Creates timedelta. Note that the function converts the result to positive
+        #Creates timedelta. Note that the function converts the result to positive if absolute=True
         time_left = self.return_time - datetime.datetime.utcnow()
         if absolute:
             return (str(abs(time_left.days)) + " days, " + str(int(time_left.seconds/3600)) 
@@ -115,6 +116,8 @@ class Copy(db.Model):
         return 0
 
     def pretty(self, date_time):
+        # Takes python datetime object and converts to string in form:
+        # mm/dd/yyyy at hour:minute
         date = date_time.date()
         time = date_time.time()
         if time.minute < 10:
@@ -129,6 +132,8 @@ class Copy(db.Model):
         return date_string + " at " + time_string
 
     def borrow_time_pretty(self):
+        # By default python datetime is naive, so you have to set tzinfo to utc before converting
+        # to local timezone
         return self.pretty(self.borrow_time.replace(tzinfo=tz.tzutc()).astimezone(tz.tzlocal()))
 
     def return_time_pretty(self):
