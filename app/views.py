@@ -738,7 +738,20 @@ def overduebooks():
     page = request.args.get('page', 1, type=int)
     query = models.Copy.query.filter(models.Copy.borrower != None)
     query = query.filter(models.Copy.return_time < datetime.datetime.utcnow())
-    pagination = query.order_by(models.Copy.id.asc()).paginate(
+
+    sort_by = request.args.get('sort_by', 'copyid')
+    if sort_by == 'bookid':
+        query = query.join(models.Book, models.Copy.book).order_by(models.Book.id.asc())
+    elif sort_by == 'bookaz':
+        query = query.join(models.Book, models.Copy.book).order_by(models.Book.title.asc())
+    elif sort_by == 'userid':
+        query = query.join(models.User, models.Copy.borrower).order_by(models.User.id.asc())
+    elif sort_by == 'useraz':
+        query = query.join(models.User, models.Copy.borrower).order_by(models.User.name.asc())
+    else:
+        query = query.order_by(models.Copy.id.asc())
+
+    pagination = query.paginate(
                  page, per_page=current_app.config['POSTS_PER_PAGE'],
                  error_out=False)
 
