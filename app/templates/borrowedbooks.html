@@ -38,9 +38,9 @@
         <ul class="dropdown-menu">
             <li><a class="dropdown-item" href={{ url_for("borrowedbooks", sort_by="copyid") }}>Copy ID</a></li>
             <li><a class="dropdown-item" href={{ url_for("borrowedbooks", sort_by="bookid") }}>Book ID</a></li>
-            <li><a class="dropdown-item" href={{ url_for("borrowedbooks", sort_by="bookaz") }}>Book A-Z</a></li>
-            <li><a class="dropdown-item" href={{ url_for("borrowedbooks", sort_by="userid") }}>Borrowed ID</a></li>
-            <li><a class="dropdown-item" href={{ url_for("borrowedbooks", sort_by="useraz") }}>Borrower A-Z</a></li>
+            <li><a class="dropdown-item" href={{ url_for("borrowedbooks", sort_by="bookaz") }}>Book Title</a></li>
+            <li><a class="dropdown-item" href={{ url_for("borrowedbooks", sort_by="userid") }}>Borrower ID</a></li>
+            <li><a class="dropdown-item" href={{ url_for("borrowedbooks", sort_by="useraz") }}>Borrower Name</a></li>
         </ul>
     </span>
     {{ macros.result_counter(pagination) }}

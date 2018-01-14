@@ -489,6 +489,7 @@ def search():
 
     keyword = request.args.get('keyword').strip()
     search_type = request.args.get('search_type')
+    sort_by = request.args.get('sort_by')
 
     form = forms.Search(search_type=search_type,
                         keyword=keyword)
@@ -517,6 +518,14 @@ def search():
         query = query.union(models.Book.query.filter(models.Book.title.ilike(keyword+' %')))
         query = query.union(models.Book.query.filter(models.Book.title.ilike('% '+keyword)))
         query = query.union(models.Book.query.filter(models.Book.title.ilike('% '+keyword+' %')))
+
+        # Sort query by sort_by variable
+        if sort_by == 'bookaz':
+            query = query.order_by(models.Book.title.asc())
+        elif sort_by == 'authoraz':
+            query = query.join(models.Author, models.Book.author).order_by(func.substr(models.Author.name, func.instr(models.Author.name, ' ')))
+        elif sort_by == 'bookid':
+            query = query.order_by(models.Book.id.asc())
 
     if search_type == 'author':
         query = models.Author.query.filter_by(id=id)
