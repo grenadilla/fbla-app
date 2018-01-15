@@ -14,6 +14,7 @@ The full code for VLib can be found on [Github](https://github.com/grenadilla/fb
 ### Opening
 VLib comes in two forms whose only difference is their distribution method. VLib can either used from a windows executable or at this [website](grenadilla.pythonanywhere.com).
 
+![VLib.exe](https://i.imgur.com/Sr7li9a.jpg)
 
 To use the windows executable, first run vlibextractor.exe, a self extracting archive that will extract the full contents of VLib into a folder in a directory of your choosing. Next, open the resulting VLib folder, and scroll down and run VLib.exe.
 
