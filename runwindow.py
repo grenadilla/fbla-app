@@ -22,7 +22,7 @@ def url_ok(url, port):
 
 def window():
     # Create the app window
-    webview.create_window("Flask Test", "http://127.0.0.1:5000", min_size=(600,800))
+    webview.create_window("VLib", "http://127.0.0.1:5000", min_size=(600,800))
 
 if __name__ == '__main__':
     # Start server in a seperate thread
