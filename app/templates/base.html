@@ -34,8 +34,9 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Users <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href={{ url_for("students", _external=True) }}>Students</a></li>
-                        <li><a class="dropdown-item" href={{ url_for("teachers", _external=True) }}>Teachers</a></li>
+                        <li><a class="dropdown-item" href={{ url_for("users",  user_type="all", _external=True) }}>All</a></li>
+                        <li><a class="dropdown-item" href={{ url_for("users",  user_type="student", _external=True) }}>Students</a></li>
+                        <li><a class="dropdown-item" href={{ url_for("users",  user_type="teacher", _external=True) }}>Teachers</a></li>
                     </ul>
                 </li>
                 <!--<li><a href={{ url_for("data", _external=True) }}>Data</a></li>-->

@@ -4,32 +4,38 @@
 {% block page_content %}
 
 <div class="container">
-    <h1 style="display: inline-block;">{{ usertype|title }} Data</h1>
+    <h1 style="display: inline-block;">{{ user_type|title }} Data</h1>
     <span class="dropdown">
         <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
             Sort By <b class="caret"></b>
         </button>
         <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href={{ url_for(address, sort_by="userid") }}>ID</a></li>
-            <li><a class="dropdown-item" href={{ url_for(address, sort_by="useraz") }}>Name</a></li>
+            <li><a class="dropdown-item" href={{ url_for("users", user_type=user_type, sort_by="userid") }}>ID</a></li>
+            <li><a class="dropdown-item" href={{ url_for("users", user_type=user_type, sort_by="useraz") }}>Name</a></li>
         </ul>
     </span>
     <table class="table table-bordered table-hover">
         <thead>
             <th>ID</th>
+            {% if user_type == "all" %}
+                <th>User Type</th>
+            {% endif %}
             <th>Name</th>
         </thead>
         <tbody>
         {% for user in users %}
             <tr>
                 <td class="clickable-link" data-href={{ url_for('user', id=user.id) }}>{{ user.id }}</td>
+                {% if user_type == "all" %}
+                    <td class="clickable-link" data-href={{ url_for('user', id=user.id) }}>{{ user.type_name|title }}</td>
+                {% endif %}
                 <td class="clickable-link" data-href={{ url_for('user', id=user.id) }} >{{ user.name }}</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
     <nav>
-        {{ macros.pagination_widget(pagination, address) }}
+        {{ macros.pagination_widget(pagination, "users", user_type=user_type, sort_by=sort_by) }}
     </nav>
 </div>
 {% endblock %}

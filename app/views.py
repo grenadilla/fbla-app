@@ -436,8 +436,8 @@ def catalog():
                            form=form,
                            login=login)
 
-@app.route('/users/students', methods=['GET', 'POST'])
-def students():
+@app.route('/users/<user_type>', methods=['GET', 'POST'])
+def users(user_type):
     #List of all students
     login = forms.Login()
     if login.validate_on_submit():
@@ -447,7 +447,14 @@ def students():
     sort_by = request.args.get('sort_by', 'userid')
     # Pagination of all students
     page = request.args.get('page', 1, type=int)
-    query = models.User.query.filter(models.User.type_name == 'student')
+
+    if user_type == "student":
+        query = models.User.query.filter(models.User.type_name == 'student')
+    elif user_type == "teacher":
+        query = models.User.query.filter(models.User.type_name == 'teacher')
+    else:
+        query = models.User.query
+
     if sort_by == 'useraz':
         query = query.order_by(models.User.name.asc())
     else:
@@ -458,35 +465,8 @@ def students():
     return render_template('users.html',
                            users=users,
                            pagination=pagination,
-                           usertype='student',
-                           address='students',
-                           login=login)
-
-
-@app.route('/users/teachers', methods=['GET', 'POST'])
-def teachers():
-    #List of all teachers
-    login = forms.Login()
-    if login.validate_on_submit():
-        signin(login.login_data.data)
-        return redirect(redirect_url())
-    
-    sort_by = request.args.get('sort_by', 'userid')
-    # Pagination of all teachers
-    page = request.args.get('page', 1, type=int)
-    query = models.User.query.filter(models.User.type_name == 'teacher')
-    if sort_by == 'useraz':
-        query = query.order_by(models.User.name.asc())
-    else:
-        query = query.order_by(models.User.id.asc())
-    pagination = query.paginate(page, per_page=current_app.config['POSTS_PER_PAGE'],
-                 error_out=False)
-    users = pagination.items
-    return render_template('users.html',
-                           users=users,
-                           pagination=pagination,
-                           usertype='teacher',
-                           address='teachers',
+                           user_type=user_type,
+                           sort_by=sort_by,
                            login=login)
 
 
@@ -561,7 +541,8 @@ def search():
                            pagination=pagination,
                            results=results, 
                            keyword=keyword,
-                           search_type=search_type)
+                           search_type=search_type,
+                           sort_by=sort_by)
 
 
 @app.route('/add/user', methods=['GET', 'POST'])
@@ -694,7 +675,8 @@ def fines():
     return render_template('fines.html',
                            users=users, 
                            pagination=pagination,
-                           login=login)
+                           login=login,
+                           sort_by=sort_by)
 
 
 @app.route('/borrowedbooks', methods=['GET', 'POST'])
@@ -728,7 +710,8 @@ def borrowedbooks():
     return render_template('borrowedbooks.html',
                            copies=copies, 
                            pagination=pagination,
-                           login=login)
+                           login=login,
+                           sort_by=sort_by)
 
 @app.route('/borrowedbooks/overdue', methods=['GET', 'POST'])
 def overduebooks():
@@ -763,7 +746,8 @@ def overduebooks():
     return render_template('overduebooks.html',
                            copies=copies, 
                            pagination=pagination,
-                           login=login)
+                           login=login,
+                           sort_by=sort_by)
 
 
 def signin(data):

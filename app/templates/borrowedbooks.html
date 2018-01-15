@@ -80,7 +80,7 @@
         {% endfor %}
     </table>
     <nav>
-        {{ macros.pagination_widget(pagination, 'borrowedbooks') }}
+        {{ macros.pagination_widget(pagination, 'borrowedbooks', sort_by=sort_by) }}
     </nav>
 {% else %}
     <h2>There are currently no borrowed books</h2>

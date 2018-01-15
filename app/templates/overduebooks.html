@@ -69,7 +69,7 @@
         {% endfor %}
     </table>
     <nav>
-        {{ macros.pagination_widget(pagination, 'overduebooks') }}
+        {{ macros.pagination_widget(pagination, 'overduebooks', sort_by=sort_by) }}
     </nav>
 {% else %}
     <h2>There are currently no overdue books</h2>

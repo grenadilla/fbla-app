@@ -59,7 +59,7 @@
         {% endfor %}
     </table>
     <nav>
-        {{ macros.pagination_widget(pagination, 'fines') }}
+        {{ macros.pagination_widget(pagination, 'fines', sort_by=sort_by) }}
     </nav>
 {% else %}
     <h2>There are currently no users with unpaid fines</h2>
