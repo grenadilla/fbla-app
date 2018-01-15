@@ -17,7 +17,14 @@ VLib comes in two forms whose only difference is their distribution method. VLib
 
 To use the windows executable, first run vlibextractor.exe, a self extracting archive that will extract the full contents of VLib into a folder in a directory of your choosing. Next, open the resulting VLib folder, and scroll down and run VLib.exe.
 
-After cx\_freeze converts the application to a windows executable, some of the code is not packaged, and the the remaining files can be hard to find. Much of the code can still be found in the app folder under Vlib/app, but it is suggested to view the code either from Github or from the included vlibcode folder.
+
+After cx\_freeze converts the application to a windows executable, some of the code is not packaged and the the remaining files can be hard to find. Much of the code can still be found in the app folder under Vlib/app, but it is suggested to view the code either from Github or from the included vlibcode folder.
+
+### Advanced Opening
+To run VLib on your own from the command line, Python 3 must be installed. Open the vlibcode folder and install all python dependencies by running `pip install -r requirements.txt` on the command line. It is recommended that you set up a python virtual environment before doing this step. To use VLib on a web browser, run `python run.py` and then access VLib at http://127.0.0.1:5000. To run VLib in windowed mode, run `python runwindow.py`.
+
+To convert VLib into an executable on your own, open the vlibcode folder and install all python dependencies by running `pip install -r requirements.txt` on the command line. It is recommended to set up a python virtual environment to do this. Next, run `python setup.py build` on the command line, and the frozen application should appear under vlibcode/build/exe.yourcomputer/VLib.exe. Python 3 must be installed to freeze the application on your own.
+
 
 ### Navigation
 ![The Home Page](https://i.imgur.com/goPv2M2.png)
@@ -118,6 +125,7 @@ run.py first imports the app created in the app package. Note that 'app' the var
 
 runwindow.py calls the run function defined in run.py, but opens it in a webview window, allowing it to look and act like a stand-alone application without needing to open a web browser.
 
+
 ### config.py
 config.py holds all the configuration options.
 
@@ -125,7 +133,7 @@ config.py holds all the configuration options.
 app.db is the SQLite database that holds all the data.
 
 ### setup.py
-setup.py was a script autobuilt using cxfreeze-quickstart to generate a cx\_freeze distutils script, which was modified for VLib. setup.py allows the application to be frozen, meaning it bundles all the code and dependencies so VLib can run as a stand alone executable. setup.py freezes runwindow.py, which is the script which runs VLib in windowed mode.
+setup.py was a script autobuilt using cxfreeze-quickstart to generate a cx\_freeze distutils script, which was modified for VLib. setup.py allows the application to be frozen, meaning it bundles all the code and dependencies so VLib can run as a stand alone executable. setup.py freezes runwindow.py, which is the script which runs VLib in windowed mode. 
 
 ### app and \_\_init\_\_.py
 \_\_init\_\_.py declares the app folder to be a package folder. \_\_init\_\_.py initializes the app with `app = Flask(__name__)` and also imports various variables at the package level for easier access in the rest of the code. The `app` variable created here is the variable used in run.py to start the server
