@@ -1,6 +1,8 @@
 # VLib <a name="vlib"></a>
 Vlib is a database program written in the Python programming language using the micro web framework Flask and a SQLite database. VLib stores data on books, book copies, borrowers (both students and teachers), and authors. Various data, such as books borrowed by students, are connected in the relational SQL database. Various parts of the program are implemented as webpages, with numerous links between pages to aid in navigation.
 
+The full code for VLib can be found on [Github](https://github.com/grenadilla/fbla-app)
+
 ## Contents
 1. [Summary](#vlib)
 1. [How To Use](#how-to-use)
@@ -9,8 +11,16 @@ Vlib is a database program written in the Python programming language using the 
 1. [How It Works](#how-it-works)
 
 ## How To Use <a name="how-to-use"></a>
+### Opening
+VLib comes in two forms whose only difference is their distribution method. VLib can either used from a windows executable or at this [website](grenadilla.pythonanywhere.com).
+
+
+To use the windows executable, first run vlibextractor.exe, a self extracting archive that will extract the full contents of VLib into a folder in a directory of your choosing. Next, open the resulting VLib folder, and scroll down and run VLib.exe.
+
+After cx\_freeze converts the application to a windows executable, some of the code is not packaged, and the the remaining files can be hard to find. Much of the code can still be found in the app folder under Vlib/app, but it is suggested to view the code either from Github or from the included vlibcode folder.
+
 ### Navigation
-![Home](app/static/images/home.png)
+![The Home Page](https://i.imgur.com/goPv2M2.png)
 
 + **Home**
     + The page you are on right now.
@@ -23,41 +33,41 @@ Vlib is a database program written in the Python programming language using the 
 + **Add**
     + This is where new users, authors, and books are added into the system.
 + **Fines**
-    + A list of users with unpaid fines.
+    + A list of users with unpaid fines. Includes fines in both returned and unreturned books. The list can be sorted.
 + **Borrowed Books**
-    + A list of all borrowed books. Select 'overdue' to view only overdue books.
+    + A list of all borrowed books. Select 'overdue' to view only overdue books. The list can be sorted.
 + **User Settings**
     + Change settings for students and teachers such as how long they can borrow a book, their daily fines, and how many books they can borrow at a time.
 + **Login**
     + Change the currently logged in user by inputting a student or teacher's name or ID number. A logged in user can pay off fines and borrow books. 
 
 ### Adding Data
-![Adding Data](app/static/images/addbook.png)
+![Books can be added on this page](https://i.imgur.com/Pc54KkO.png)
 
 Users (students and teachers), authors, and books can be added into the system by clicking on the 'Add' dropdown and choosing an option. Books require valid authors to be added before they can be added. Pictured above is the page where you can add data for a new book.
 
 ### The User Page
-![The User Page](app/static/images/user.png)
+![The User Page](https://i.imgur.com/DMNVqS1.png)
 
 The user page has information on the user, including their ID number, whether they are a student or teacher, their unpaid fines, and a list of their books. From the user page librarians can input the ID number of books to keep track of the books students and teachers have borrowed. From the user page librarians can also keep track of fine payments by users by inputting them in the system here. Clicking on the name of the author of a book will take you to the information page for that author. Clicking on any other information on a book will take you to that book's information page, where the book can be returned. Click on the edit page to change the user's name and whether they are a student or teacher.
 
 ### The Book Page
-![The Book Page](app/static/images/book.png)
+![The Book Page](https://i.imgur.com/BEOMnOn.png)
 
 The book page has information on the book, including its ID number, author, and each of its copies. Clicking on the author's name will take you to the author's page. Clicking on the name of any student or teacher borrowing a copy will take you to the information page for that user. The table of copies displays information on who is borrowing the copy and the time of borrowing and due data, if any. Click on the edit button to change the book's title and its author, and to add additional copies. Clicking on the red 'X' next to the ID number of a copy will allow you to delete that copy. Finally, book copies can be borrowed or returned here, but only if a user is logged in.
 
 ### The Author Page
-![The Author Page](app/static/images/author.png)
+![The Author Page](https://i.imgur.com/UC7wOsW.png)
 
 The author page has information on the author, including ID number and name. It lists all the books the author has written and the number of available copies for each. Clicking on any of the books will take you to the page for that book.
 
 ### The Catalog
-![The Catalog](app/static/images/catalog.png)
+![The Catalog](https://i.imgur.com/5VrA19a.png)
 
 The catalog allows you to search for books and author by ID number, title, and name. Clicking on a book's title will take you to its page, and clicking on the name of an author will take you to the author's page. Below the search bar is a list of all books in the system.
 
 ## Tools Used <a name="tools-used"></a>
-VLib was written mainly using Python 3, using the following modules and their dependencies (a full list can be found in [requirements.txt](requirements.txt)):
+VLib was written mainly using Python 3, using the following modules and their dependencies (a full list can be found in [requirements.txt](https://raw.githubusercontent.com/grenadilla/fbla-app/master/requirements.txt)):
 
 * [Flask](http://flask.pocoo.org/):
 Flask is a python web microframework
@@ -77,8 +87,10 @@ The basic structure of the application is as follows:
 
     VLib/
       run.py
+      runwindow.py
       config.py
       app.db
+      setup.py
       app/
         __init__.py
         models.py
@@ -101,14 +113,19 @@ The basic structure of the application is as follows:
           ...
           etc.
 
-### run.py
+### run.py and runwindow.py
 run.py first imports the app created in the app package. Note that 'app' the variable and 'app' the package are different things, which is why `from app import app` is used. Then the app is run, starting the server.
+
+runwindow.py calls the run function defined in run.py, but opens it in a webview window, allowing it to look and act like a stand-alone application without needing to open a web browser.
 
 ### config.py
 config.py holds all the configuration options.
 
 ### app.db
 app.db is the SQLite database that holds all the data.
+
+### setup.py
+setup.py was a script autobuilt using cxfreeze-quickstart to generate a cx\_freeze distutils script, which was modified for VLib. setup.py allows the application to be frozen, meaning it bundles all the code and dependencies so VLib can run as a stand alone executable. setup.py freezes runwindow.py, which is the script which runs VLib in windowed mode.
 
 ### app and \_\_init\_\_.py
 \_\_init\_\_.py declares the app folder to be a package folder. \_\_init\_\_.py initializes the app with `app = Flask(__name__)` and also imports various variables at the package level for easier access in the rest of the code. The `app` variable created here is the variable used in run.py to start the server
@@ -175,3 +192,6 @@ Or:
     users = models.User.query.filter(models.User.total_fines == 0).all()
 
 The second form has much more versatility than the first, such as being able to use less than and greater than and various SQLAlchemy functions.
+
+### The Session
+Flask allows the user of the session dictionary, which allows data to be stored in cookies. VLib uses the session to store the current user. The session can be accessed like any other python dictionary: `session['userid']
