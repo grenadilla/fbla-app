@@ -12,7 +12,7 @@ The full code for VLib can be found on [Github](https://github.com/grenadilla/fb
 
 ## How To Use <a name="how-to-use"></a>
 ### Opening
-VLib comes in two forms whose only difference is their distribution method. VLib can either used from a windows executable or at this [website](grenadilla.pythonanywhere.com).
+VLib comes in two forms whose only difference is their distribution method. VLib can either used from a windows executable or at this [website](https://grenadilla.pythonanywhere.com).
 
 ![VLib.exe](https://i.imgur.com/Sr7li9a.jpg)
 
