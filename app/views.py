@@ -250,7 +250,7 @@ def deleteuser(id):
     user = models.User.query.filter_by(id=id).first()
     if user is not None:
         flash("Deleted user " + user.name + " ID: " + str(user.id))
-        if int(session['userid']) == user.id:
+        if 'userid' in session and session['userid'] is not None and int(session['userid']) == user.id:
             session['userid'] = None
             session['username'] = None
         db.session.delete(user)
